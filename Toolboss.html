@@ -1777,7 +1777,7 @@
                 const piecesDiff = newPiecesPerTool - currentPiecesPerTool;
                 safeSetText('piecesPerToolDiff', (piecesDiff >= 0 ? '+' : '') + (isNaN(piecesDiff) ? 0 : piecesDiff));
 
-                // // // Update parameter table and summary
+                // // // // Update parameter table and summary
                 updateParametersTable();
                 safeSetText('currentAnnualCost', currentTotalCost.toFixed(0) + ' €');
                 safeSetText('newAnnualCost', newTotalCost.toFixed(0) + ' €');
@@ -2134,6 +2134,126 @@
         try { window.createPieChart = createPieChart; } catch (e) {}
         try { window.updateEfficiencyBars = updateEfficiencyBars; } catch (e) {}
         try { window.updateSavingsIndicator = updateSavingsIndicator; } catch (e) {}
+
+        // Generate PDF from the main container using html2canvas + jsPDF
+        async function generatePDFBlob() {
+            try {
+                const el = document.querySelector('.container') || document.body;
+                // Ensure libraries are available
+                const html2canvasFn = window.html2canvas || window.html2canvas;
+                const jspdfLib = window.jspdf || window.jspdf;
+                const jsPDF = jspdfLib && jspdfLib.jsPDF ? jspdfLib.jsPDF : (window.jsPDF || null);
+                if (!html2canvasFn || !jsPDF) throw new Error('Required libraries (html2canvas / jsPDF) missing');
+
+                const canvas = await html2canvas(el, { scale: 2, useCORS: true, allowTaint: false });
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                // calculate the height of the image in PDF units
+                const imgProps = pdf.getImageProperties(imgData);
+                const imgWidthMm = pageWidth;
+                const imgHeightMm = (imgProps.height * imgWidthMm) / imgProps.width;
+
+                if (imgHeightMm <= pageHeight) {
+                    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidthMm, imgHeightMm);
+                } else {
+                    // If content is longer than one page, scale down to fit the page height
+                    const scale = pageHeight / imgHeightMm;
+                    const newWidth = imgWidthMm * scale;
+                    const newHeight = imgHeightMm * scale;
+                    const x = (pageWidth - newWidth) / 2;
+                    pdf.addImage(imgData, 'JPEG', x, 0, newWidth, newHeight);
+                }
+
+                const arrayBuf = pdf.output('arraybuffer');
+                return new Blob([arrayBuf], { type: 'application/pdf' });
+            } catch (err) {
+                console.error('generatePDFBlob error', err);
+                throw err;
+            }
+        }
+
+        // Open generated PDF in a new tab for preview and also trigger download
+        async function generatePDFReport() {
+            try {
+                const statusEl = document.getElementById('emailStatus');
+                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Genereerin PDF...'; }
+                const blob = await generatePDFBlob();
+                const url = URL.createObjectURL(blob);
+                // Open preview in a new tab
+                window.open(url, '_blank');
+                // Trigger download as well
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ToolBoss-report.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                if (statusEl) { statusEl.textContent = 'PDF on loodud ja avaneb uues aknas.'; }
+            } catch (err) {
+                console.error('generatePDFReport error', err);
+                alert('PDF genereerimine ebaõnnestus: ' + (err && err.message ? err.message : String(err)));
+            }
+        }
+
+        function showEmailDialog() {
+            const modal = document.getElementById('emailModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+        }
+
+        function closeEmailDialog() {
+            const modal = document.getElementById('emailModal');
+            if (!modal) return;
+            modal.style.display = 'none';
+            const statusEl = document.getElementById('emailStatus'); if (statusEl) { statusEl.style.display = 'none'; statusEl.textContent = ''; }
+        }
+
+        async function sendEmail() {
+            const recipient = (document.getElementById('recipientEmail') || {}).value || '';
+            const sender = (document.getElementById('senderEmail') || {}).value || '';
+            const message = (document.getElementById('emailMessage') || {}).value || '';
+            const statusEl = document.getElementById('emailStatus');
+
+            if (!recipient) {
+                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Täida saaja e-mail.'; }
+                return;
+            }
+
+            try {
+                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Genereerin PDF ja valmistan e-kirja...'; }
+                const blob = await generatePDFBlob();
+                const filename = 'ToolBoss-report.pdf';
+                // Trigger download of the PDF (so user has it to attach) — mailto cannot auto-attach files
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+
+                const subject = encodeURIComponent('ToolBoss raport');
+                const bodyText = `Palun manustage ToolBoss raport (selle lehe PDF).\n\n${message ? 'Lisateade: ' + message + '\n\n' : ''}Sinu (koopia): ${sender || '---'}`;
+                const body = encodeURIComponent(bodyText + '\n\n(Palun ataachige PDF manuaalselt, see allalaaditi automaatselt)');
+
+                window.open('mailto:' + encodeURIComponent(recipient) + '?subject=' + subject + '&body=' + body, '_blank');
+
+                if (statusEl) { statusEl.textContent = 'PDF loodud. Uus e-kiri avatakse teie meiliprogrammis — manustage allalaaditud PDF ja saatke.'; }
+                closeEmailDialog();
+            } catch (err) {
+                console.error('sendEmail error', err);
+                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'E-posti saatmine nurjus: ' + (err && err.message ? err.message : String(err)); }
+            }
+        }
+
+        // Expose PDF & email utilities to window (inline handlers expect globals)
+        try { window.generatePDFReport = generatePDFReport; } catch (e) { window.generatePDFReport = function(){ console.error('generatePDFReport not available', e); }; }
+        try { window.showEmailDialog = showEmailDialog; } catch (e) { window.showEmailDialog = function(){ console.error('showEmailDialog not available', e); }; }
+        try { window.closeEmailDialog = closeEmailDialog; } catch (e) { window.closeEmailDialog = function(){ console.error('closeEmailDialog not available', e); }; }
+        try { window.sendEmail = sendEmail; } catch (e) { window.sendEmail = function(){ console.error('sendEmail not available', e); }; }
 
         // ...existing code...
     </script>
