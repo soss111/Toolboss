@@ -1682,107 +1682,109 @@
             }
         }
 
+        function getNumber(id, defaultValue = 0) {
+            try {
+                const el = document.getElementById(id);
+                if (!el) return defaultValue;
+                const v = parseFloat(el.value);
+                return isNaN(v) ? defaultValue : v;
+            } catch (e) {
+                console.warn('getNumber error for', id, e);
+                return defaultValue;
+            }
+        }
+
+        function getString(id, defaultValue = '') {
+            try {
+                const el = document.getElementById(id);
+                if (!el) return defaultValue;
+                return (el.value || defaultValue).toString();
+            } catch (e) {
+                console.warn('getString error for', id, e);
+                return defaultValue;
+            }
+        }
+
         function calculateEfficiency() {
             try {
-                // Get all input values with validation
-                const yearlyQuantity = parseFloat(document.getElementById('yearlyQuantity').value) || 0;
-                const machineRate = parseFloat(document.getElementById('machineRate').value) || 0;
-                const toolChangeTime = parseFloat(document.getElementById('toolChangeTime').value) || 0;
-                const workHours = parseFloat(document.getElementById('workHours').value) || 0;
+                // Safe reads using helpers
+                const yearlyQuantity = getNumber('yearlyQuantity', 0);
+                const machineRate = getNumber('machineRate', 0);
+                const toolChangeTime = getNumber('toolChangeTime', 0);
 
                 // Current tool
-                const currentToolPrice = parseFloat(document.getElementById('currentToolPrice').value) || 0;
-                const currentToolLife = parseFloat(document.getElementById('currentToolLife').value) || 0;
-                const currentCutLength = parseFloat(document.getElementById('currentCutLength').value) || 0;
-                const currentTimePerPart = parseFloat(document.getElementById('currentTimePerPart').value) || 0;
-                const currentToolName = document.getElementById('currentToolName').value || 'Hetkel kasutusel';
+                const currentToolPrice = getNumber('currentToolPrice', 0);
+                const currentToolLife = getNumber('currentToolLife', 0);
+                const currentCutLength = getNumber('currentCutLength', 0);
+                const currentTimePerPart = getNumber('currentTimePerPart', 0);
+                const currentToolName = getString('currentToolName', 'Hetkel kasutusel');
 
                 // New tool
-                const newToolPrice = parseFloat(document.getElementById('newToolPrice').value) || 0;
-                const newToolLife = parseFloat(document.getElementById('newToolLife').value) || 0;
-                const newCutLength = parseFloat(document.getElementById('newCutLength').value) || 0;
-                const newTimePerPart = parseFloat(document.getElementById('newTimePerPart').value) || 0;
-                const newToolName = document.getElementById('newToolName').value || 'Uus tööriist';
+                const newToolPrice = getNumber('newToolPrice', 0);
+                const newToolLife = getNumber('newToolLife', 0);
+                const newCutLength = getNumber('newCutLength', 0);
+                const newTimePerPart = getNumber('newTimePerPart', 0);
+                const newToolName = getString('newToolName', 'Uus tööriist');
 
-                // Calculate pieces per tool
-                const currentPiecesPerTool = currentCutLength > 0 ? Math.floor(currentToolLife * 1000 / currentCutLength) : 0;
-                const newPiecesPerTool = newCutLength > 0 ? Math.floor(newToolLife * 1000 / newCutLength) : 0;
+                // Calculate pieces per tool safely
+                const currentPiecesPerTool = (currentCutLength > 0 && currentToolLife > 0) ? Math.floor(currentToolLife * 1000 / currentCutLength) : 0;
+                const newPiecesPerTool = (newCutLength > 0 && newToolLife > 0) ? Math.floor(newToolLife * 1000 / newCutLength) : 0;
 
-                // Calculate tool quantities needed per year
                 const currentToolQuantityNeeded = currentPiecesPerTool > 0 ? Math.ceil(yearlyQuantity / currentPiecesPerTool) : 0;
                 const newToolQuantityNeeded = newPiecesPerTool > 0 ? Math.ceil(yearlyQuantity / newPiecesPerTool) : 0;
 
-                // Update tool quantity displays
-                document.getElementById('currentToolQuantity').textContent = currentToolQuantityNeeded + ' tk';
-                document.getElementById('newToolQuantity').textContent = newToolQuantityNeeded + ' tk';
-                document.getElementById('toolQuantityDiff').textContent = (currentToolQuantityNeeded - newToolQuantityNeeded) + ' tk';
+                // Update UI safely
+                const safeSetText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+                safeSetText('currentToolQuantity', currentToolQuantityNeeded + ' tk');
+                safeSetText('newToolQuantity', newToolQuantityNeeded + ' tk');
+                safeSetText('toolQuantityDiff', (currentToolQuantityNeeded - newToolQuantityNeeded) + ' tk');
 
-                // Calculate tool costs per year
                 const currentToolCostPerYear = currentToolPrice * currentToolQuantityNeeded;
                 const newToolCostPerYear = newToolPrice * newToolQuantityNeeded;
                 const toolCostDifference = currentToolCostPerYear - newToolCostPerYear;
 
-                // Calculate tool change costs
+                // Tool change costs
                 const currentToolChangesPerYear = currentPiecesPerTool > 0 ? yearlyQuantity / currentPiecesPerTool : 0;
                 const newToolChangesPerYear = newPiecesPerTool > 0 ? yearlyQuantity / newPiecesPerTool : 0;
-
                 const currentToolChangeHours = (toolChangeTime / 3600) * currentToolChangesPerYear;
                 const newToolChangeHours = (toolChangeTime / 3600) * newToolChangesPerYear;
-
                 const currentToolChangeCost = currentToolChangeHours * machineRate;
                 const newToolChangeCost = newToolChangeHours * machineRate;
                 const toolChangeSavings = currentToolChangeCost - newToolChangeCost;
 
-                // Update tool change cost displays
-                document.getElementById('toolChangeCurrent').textContent = currentToolChangeCost.toFixed(0) + ' €';
-                document.getElementById('toolChangeNew').textContent = newToolChangeCost.toFixed(0) + ' €';
-                document.getElementById('toolChangeSavings').textContent = toolChangeSavings.toFixed(0) + ' €';
+                safeSetText('toolChangeCurrent', currentToolChangeCost.toFixed(0) + ' €');
+                safeSetText('toolChangeNew', newToolChangeCost.toFixed(0) + ' €');
+                safeSetText('toolChangeSavings', toolChangeSavings.toFixed(0) + ' €');
 
-                // Calculate time savings
+                // Time savings and totals
                 const currentTimePerYear = (currentTimePerPart * yearlyQuantity) / 3600; // hours
                 const newTimePerYear = (newTimePerPart * yearlyQuantity) / 3600; // hours
                 const timeSavingsHours = currentTimePerYear - newTimePerYear;
-
-                // Calculate machine cost savings
                 const machineCostSavings = timeSavingsHours * machineRate;
-
-                // Calculate total annual savings
                 const totalAnnualSavings = toolCostDifference + machineCostSavings + toolChangeSavings;
 
-                // Calculate time efficiency increase
-                const timeEfficiencyIncrease = currentTimePerYear > 0
-                    ? ((currentTimePerYear - newTimePerYear) / currentTimePerYear * 100).toFixed(1)
-                    : 0;
+                const timeEfficiencyIncrease = currentTimePerYear > 0 ? ((currentTimePerYear - newTimePerYear) / currentTimePerYear * 100) : 0;
 
-                // Calculate total costs including work hours and tool changes
                 const currentTotalCost = currentToolCostPerYear + (currentTimePerYear * machineRate) + currentToolChangeCost;
                 const newTotalCost = newToolCostPerYear + (newTimePerYear * machineRate) + newToolChangeCost;
+                const financialGain = currentTotalCost > 0 ? ((currentTotalCost - newTotalCost) / currentTotalCost * 100) : 0;
 
-                // Financial gain percentage
-                const financialGain = currentTotalCost > 0
-                    ? ((currentTotalCost - newTotalCost) / currentTotalCost * 100).toFixed(0)
-                    : 0;
+                safeSetText('timeSavings', (isNaN(timeSavingsHours) ? 0 : timeSavingsHours).toFixed(1));
+                safeSetText('timeEfficiency', (isNaN(timeEfficiencyIncrease) ? 0 : timeEfficiencyIncrease.toFixed(1)) + '%');
+                safeSetText('toolCostSavings', (isNaN(toolCostDifference) ? 0 : toolCostDifference).toFixed(0) + ' €');
+                safeSetText('totalSavings', (isNaN(totalAnnualSavings) ? 0 : totalAnnualSavings).toFixed(0) + ' €');
 
-                // Update metrics with safe formatting
-                document.getElementById('timeSavings').textContent = (isNaN(timeSavingsHours) ? 0 : timeSavingsHours).toFixed(1);
-                document.getElementById('timeEfficiency').textContent = (isNaN(timeEfficiencyIncrease) ? 0 : timeEfficiencyIncrease) + '%';
-                document.getElementById('toolCostSavings').textContent = (isNaN(toolCostDifference) ? 0 : toolCostDifference).toFixed(0) + ' €';
-                document.getElementById('totalSavings').textContent = (isNaN(totalAnnualSavings) ? 0 : totalAnnualSavings).toFixed(0) + ' €';
-
-                // Update pieces per tool difference with safe formatting
                 const piecesDiff = newPiecesPerTool - currentPiecesPerTool;
-                document.getElementById('piecesPerToolDiff').textContent = (piecesDiff >= 0 ? '+' : '') + (isNaN(piecesDiff) ? 0 : piecesDiff);
+                safeSetText('piecesPerToolDiff', (piecesDiff >= 0 ? '+' : '') + (isNaN(piecesDiff) ? 0 : piecesDiff));
 
-                // Update parameters comparison table
+                // Update parameter table and summary
                 updateParametersTable();
+                safeSetText('currentAnnualCost', currentTotalCost.toFixed(0) + ' €');
+                safeSetText('newAnnualCost', newTotalCost.toFixed(0) + ' €');
+                safeSetText('financialGain', (isNaN(financialGain) ? 0 : financialGain.toFixed(0)) + '%');
+                safeSetText('totalAnnualSavings', (isNaN(totalAnnualSavings) ? 0 : totalAnnualSavings).toFixed(0) + ' €');
 
-                // Update summary
-                document.getElementById('currentAnnualCost').textContent = currentTotalCost.toFixed(0) + ' €';
-                document.getElementById('newAnnualCost').textContent = newTotalCost.toFixed(0) + ' €';
-                document.getElementById('financialGain').textContent = financialGain + '%';
-                document.getElementById('totalAnnualSavings').textContent = totalAnnualSavings.toFixed(0) + ' €';
-
-                // Color code the metrics
+                // Color code metrics and create comparisons
                 colorCodeMetric('timeSavingsCard', timeSavingsHours);
                 colorCodeMetric('timeEfficiencyCard', parseFloat(timeEfficiencyIncrease));
                 colorCodeMetric('toolCostSavingsCard', toolCostDifference);
@@ -1790,543 +1792,55 @@
                 colorCodeMetric('toolQuantityCard', currentToolQuantityNeeded - newToolQuantityNeeded);
                 colorCodeMetric('toolChangeSavingsCard', toolChangeSavings);
 
-                // Create cost comparison list
                 createComparisonList('costComparison', [
-                    { label: 'HETKEL KASUTUSEL', value: currentTotalCost, class: 'current' },
-                    { label: 'UUS TÖÖRIIST', value: newTotalCost, class: 'new' }
+                    { label: currentToolName, value: currentTotalCost, class: 'current' },
+                    { label: newToolName, value: newTotalCost, class: 'new' }
                 ], '€');
 
-                // Create life comparison list
                 createComparisonList('lifeComparison', [
-                    { label: 'HETKEL KASUTUSEL', value: currentToolLife, class: 'current' },
-                    { label: 'UUS TÖÖRIIST', value: newToolLife, class: 'new' }
+                    { label: currentToolName, value: currentToolLife, class: 'current' },
+                    { label: newToolName, value: newToolLife, class: 'new' }
                 ], 'm');
 
-                // Create pieces per tool comparison list
                 createComparisonList('piecesComparison', [
-                    { label: 'HETKEL KASUTUSEL', value: currentPiecesPerTool, class: 'current' },
-                    { label: 'UUS TÖÖRIIST', value: newPiecesPerTool, class: 'new' }
+                    { label: currentToolName, value: currentPiecesPerTool, class: 'current' },
+                    { label: newToolName, value: newPiecesPerTool, class: 'new' }
                 ], 'tk');
 
-                // Create pie chart for savings breakdown
                 createPieChart(toolCostDifference + toolChangeSavings, machineCostSavings);
 
-                // Update efficiency bars
                 updateEfficiencyBars(currentTimePerYear, newTimePerYear);
-
-                // Update savings indicator
                 updateSavingsIndicator(totalAnnualSavings);
 
-                // Show results
-                document.getElementById('results').classList.add('show');
-                document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const resultsEl = document.getElementById('results');
+                if (resultsEl) resultsEl.classList.add('show');
+                if (resultsEl) resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } catch (error) {
                 console.error('Calculation error:', error);
-                alert('Viga arvutamisel. Palun kontrollige sisestatud väärtusi.');
-            }
-        }
-
-        function colorCodeMetric(cardId, value) {
-            const card = document.getElementById(cardId);
-            if (!card) return;
-            card.classList.remove('positive', 'negative');
-            if (value > 0) {
-                card.classList.add('positive');
-            } else if (value < 0) {
-                card.classList.add('negative');
-            }
-        }
-
-        function createComparisonList(containerId, data, unit) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            container.innerHTML = '';
-
-            data.forEach(item => {
-                const compItem = document.createElement('div');
-                compItem.className = `comparison-item ${item.class || ''}`;
-
-                const value = document.createElement('div');
-                value.className = 'comparison-value';
-                const numValue = isNaN(item.value) ? 0 : item.value;
-                value.textContent = numValue.toFixed(numValue >= 100 ? 0 : 1) + ' ' + unit;
-
-                const label = document.createElement('div');
-                label.className = 'comparison-label';
-                label.textContent = item.label;
-
-                compItem.appendChild(value);
-                compItem.appendChild(label);
-                container.appendChild(compItem);
-            });
-        }
-
-        function createPieChart(toolSavings, timeSavings) {
-            const canvas = document.getElementById('savingsPieChart');
-            const ctx = canvas.getContext('2d');
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = 120;
-
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const total = Math.abs(toolSavings) + Math.abs(timeSavings);
-
-            if (total === 0) {
-                ctx.fillStyle = '#e0e0e0';
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-                ctx.fill();
-
-                ctx.fillStyle = '#666';
-                ctx.font = '16px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(getTranslation('chart.noData') || 'No data', centerX, centerY);
-                return;
-            }
-
-            const toolPercentage = (Math.abs(toolSavings) / total) * 100;
-            const timePercentage = (Math.abs(timeSavings) / total) * 100;
-
-            let currentAngle = -Math.PI / 2;
-
-            // Draw tool savings slice
-            const toolAngle = (Math.abs(toolSavings) / total) * 2 * Math.PI;
-            ctx.fillStyle = '#00ff41';
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + toolAngle);
-            ctx.closePath();
-            ctx.fill();
-
-            // Draw time savings slice
-            currentAngle += toolAngle;
-            const timeAngle = (Math.abs(timeSavings) / total) * 2 * Math.PI;
-            ctx.fillStyle = '#0088ff';
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + timeAngle);
-            ctx.closePath();
-            ctx.fill();
-
-            // Add center circle for donut effect
-            ctx.fillStyle = '#1a1a1a';
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
-            ctx.fill();
-
-            // Add total in center
-            ctx.fillStyle = '#00ff41';
-            ctx.font = 'bold 20px Consolas';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText((toolSavings + timeSavings).toFixed(0) + '€', centerX, centerY - 8);
-            ctx.font = '12px Consolas';
-            ctx.fillStyle = '#888';
-            ctx.fillText(getTranslation('chart.totalLabel') || 'TOTAL', centerX, centerY + 12);
-
-            // Update legend using translations
-            const legend = document.getElementById('pieChartLegend');
-            const toolLabel = getTranslation('chart.toolSlice') || 'Tool cost+change';
-            const timeLabel = getTranslation('chart.timeSlice') || 'Machine time';
-            legend.innerHTML = `
-        <div class="pie-legend-item">
-          <div class="pie-legend-color" style="background: #00ff41;"></div>
-          <span>${toolLabel} (${toolPercentage.toFixed(0)}%)</span>
-        </div>
-        <div class="pie-legend-item">
-          <div class="pie-legend-color" style="background: #0088ff;"></div>
-          <span>${timeLabel} (${timePercentage.toFixed(0)}%)</span>
-        </div>
-      `;
-        }
-
-        // Build a clean printable report element using current data
-        function buildPrintableReport() {
-            const wrapper = document.createElement('div');
-            wrapper.id = 'printableReport';
-            wrapper.style.boxSizing = 'border-box';
-            wrapper.style.fontFamily = 'Arial, Helvetica, sans-serif';
-            wrapper.style.color = '#111';
-            wrapper.style.background = '#fff';
-            // adapt width for mobile screens
-            const isMobile = (window.innerWidth && window.innerWidth < 700);
-            wrapper.style.width = isMobile ? '120mm' : '210mm';
-            wrapper.style.maxWidth = isMobile ? '100%' : '210mm';
-            wrapper.style.padding = isMobile ? '10mm' : '20mm';
-
-            const header = document.createElement('div');
-            header.style.display = 'flex';
-            header.style.justifyContent = 'space-between';
-            header.style.alignItems = 'center';
-            header.style.marginBottom = '12px';
-
-            const left = document.createElement('div');
-            left.innerHTML = `<h2 style="margin:0">${getTranslation('header.title') || (document.querySelector('h1') ? document.querySelector('h1').textContent : 'Venten Report')}</h2>
-                              <div style="font-size:0.85em;color:#444">${getTranslation('header.subtitle') || (document.querySelector('.header p') ? document.querySelector('.header p').textContent : '')}</div>`;
-
-            const right = document.createElement('div');
-            const client = document.getElementById('client').value || '-';
-            const date = document.getElementById('testDate').value || new Date().toISOString().split('T')[0];
-            right.innerHTML = `<div style="text-align:right; font-size:0.9em; color:#333">${getTranslation('report.clientLabel') || 'Client'}: <strong>${client}</strong></div><div style="text-align:right; font-size:0.9em; color:#333">${getTranslation('report.dateLabel') || 'Date'}: <strong>${date}</strong></div>`;
-
-            header.appendChild(left);
-            header.appendChild(right);
-
-            wrapper.appendChild(header);
-
-            // Summary cards
-            const summary = document.createElement('div');
-            summary.style.display = 'flex';
-            summary.style.gap = '10px';
-            summary.style.flexWrap = 'wrap';
-            summary.style.marginBottom = '12px';
-
-            const summaryItems = [
-                { label: getTranslation('report.totalSavings') || 'TOTAL SAVINGS', value: document.getElementById('totalSavings').textContent || '0 €' },
-                { label: getTranslation('report.timeSavings') || 'TIME SAVINGS (H)', value: document.getElementById('timeSavings').textContent || '0' },
-                { label: getTranslation('report.toolCostDelta') || 'TOOL COST Δ', value: document.getElementById('toolCostSavings').textContent || '0 €' },
-                { label: getTranslation('report.efficiencyDelta') || 'EFFICIENCY Δ', value: document.getElementById('timeEfficiency').textContent || '0%' }
-            ];
-
-            summaryItems.forEach(it => {
-                const card = document.createElement('div');
-                card.style.flex = '1 1 180px';
-                card.style.background = '#f7f7f7';
-                card.style.padding = '8px';
-                card.style.border = '1px solid #e0e0e0';
-                card.innerHTML = `<div style="font-size:0.75em;color:#666">${it.label}</div><div style="font-size:1.2em;font-weight:700;color:#111">${it.value}</div>`;
-                summary.appendChild(card);
-            });
-
-            wrapper.appendChild(summary);
-
-            // Cost comparison table
-            const tableWrap = document.createElement('div');
-            tableWrap.style.marginTop = '10px';
-            tableWrap.innerHTML = `<h3 style="margin:8px 0 6px 0;">${getTranslation('report.summaryTitle') || 'Annual Cost Comparison'}</h3>`;
-            const table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-            table.innerHTML = `<thead><tr><th style="text-align:left;border-bottom:1px solid #ddd;padding:6px">Category</th><th style="text-align:right;border-bottom:1px solid #ddd;padding:6px">Current</th><th style="text-align:right;border-bottom:1px solid #ddd;padding:6px">New</th></tr></thead>`;
-            const tbody = document.createElement('tbody');
-            const currentTotal = document.getElementById('currentAnnualCost').textContent || '0 €';
-            const newTotal = document.getElementById('newAnnualCost').textContent || '0 €';
-            const row = document.createElement('tr');
-            row.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f0f0f0">Total annual cost</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${currentTotal}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${newTotal}</td>`;
-            tbody.appendChild(row);
-            table.appendChild(tbody);
-            tableWrap.appendChild(table);
-            wrapper.appendChild(tableWrap);
-
-            // Parameters/details section
-            const detailsTitle = document.createElement('h3');
-            detailsTitle.style.margin = '12px 0 6px 0';
-            detailsTitle.textContent = getTranslation('report.detailsTitle') || 'Details';
-            wrapper.appendChild(detailsTitle);
-
-            const paramsTable = document.createElement('table');
-            paramsTable.style.width = '100%';
-            paramsTable.style.borderCollapse = 'collapse';
-            const paramsBody = document.createElement('tbody');
-            const params = [
-                ['Machine', document.getElementById('machine').value || '-'],
-                ['Application', document.getElementById('application').value || '-'],
-                ['Material', document.getElementById('material').value || '-'],
-                ['Coolant', document.getElementById('coolant').value || '-'],
-                ['Yearly qty', document.getElementById('yearlyQuantity').value || '-']
-            ];
-            params.forEach(p => {
-                const r = document.createElement('tr');
-                r.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f0f0f0;color:#666">${p[0]}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${p[1]}</td>`;
-                paramsBody.appendChild(r);
-            });
-            paramsTable.appendChild(paramsBody);
-            wrapper.appendChild(paramsTable);
-
-            // Tool comparison details
-            const toolsTitle = document.createElement('h3');
-            toolsTitle.style.margin = '12px 0 6px 0';
-            toolsTitle.textContent = getTranslation('report.toolsTitle') || 'Tool Comparison';
-            wrapper.appendChild(toolsTitle);
-
-            const toolsTable = document.createElement('table');
-            toolsTable.style.width = '100%';
-            toolsTable.style.borderCollapse = 'collapse';
-            const toolsTBody = document.createElement('tbody');
-            const currentName = document.getElementById('currentToolName').value || '-';
-            const newName = document.getElementById('newToolName').value || '-';
-            const toolRows = [
-                ['Name', currentName, newName],
-                ['Price (€)', document.getElementById('currentToolPrice').value || '-', document.getElementById('newToolPrice').value || '-'],
-                ['Life (m)', document.getElementById('currentToolLife').value || '-', document.getElementById('newToolLife').value || '-'],
-                ['Pieces/tool', document.getElementById('piecesPerToolDiff').textContent || '-', document.getElementById('piecesPerToolDiff').textContent || '-']
-            ];
-            toolRows.forEach(trr => {
-                const r = document.createElement('tr');
-                r.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f0f0f0;color:#666">${trr[0]}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${trr[1]}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${trr[2]}</td>`;
-                toolsTBody.appendChild(r);
-            });
-            toolsTable.appendChild(toolsTBody);
-            wrapper.appendChild(toolsTable);
-
-            // Footer note
-            const foot = document.createElement('div');
-            foot.style.marginTop = '18px';
-            foot.style.fontSize = '0.8em';
-            foot.style.color = '#666';
-            foot.innerHTML = `<div>${getTranslation('report.generatedBy') || 'Generated by Venten ToolBoss'}</div><div style="margin-top:6px;color:#999;font-size:0.75em">${getTranslation('report.note') || ''}</div>`;
-            wrapper.appendChild(foot);
-
-            return wrapper;
-        }
-
-        async function sendEmail() {
-            try {
-                const recipientEmail = document.getElementById('recipientEmail').value;
-                const senderEmail = document.getElementById('senderEmail').value;
-                const message = document.getElementById('emailMessage').value;
-                const statusDiv = document.getElementById('emailStatus');
-
-                if (!recipientEmail) {
-                    statusDiv.style.display = 'block';
-                    statusDiv.className = 'status-message status-error';
-                    statusDiv.textContent = '❌ Palun sisesta saaja e-mail aadress';
-                    return;
-                }
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(recipientEmail)) {
-                    statusDiv.style.display = 'block';
-                    statusDiv.className = 'status-message status-error';
-                    statusDiv.textContent = '❌ Vale e-maili aadress';
-                    return;
-                }
-
-                statusDiv.style.display = 'block';
-                statusDiv.className = 'status-message';
-                statusDiv.textContent = '⏳ Generating PDF and preparing email...';
-
-                // Generate PDF and download it so user can attach (best-effort)
-                const pdfBlob = await generatePDFReport({ preview: false, download: true });
-
-                // Prepare mailto link with summary in body
-                const subject = encodeURIComponent('Venten Report');
-                const client = encodeURIComponent(document.getElementById('client').value || '');
-                const date = encodeURIComponent(document.getElementById('testDate').value || new Date().toISOString().split('T')[0]);
-                const bodyLines = [];
-                if (client) bodyLines.push('Client: ' + client);
-                bodyLines.push('Date: ' + (date || ''));
-                bodyLines.push('\nSummary:');
-                bodyLines.push((getTranslation('report.totalSavings') || 'Total savings') + ': ' + (document.getElementById('totalSavings').textContent || '0 €'));
-                bodyLines.push((getTranslation('report.timeSavings') || 'Time savings (h)') + ': ' + (document.getElementById('timeSavings').textContent || '0'));
-                bodyLines.push((getTranslation('report.toolCostDelta') || 'Tool cost Δ') + ': ' + (document.getElementById('toolCostSavings').textContent || '0 €'));
-                if (message) bodyLines.push('\nMessage:\n' + message);
-                bodyLines.push('\n\nNote: The PDF has been downloaded to your device. Please attach it to this e-mail before sending.');
-
-                const body = encodeURIComponent(bodyLines.join('\n'));
-
-                // Open mailto (this opens user's email client)
-                const mailto = `mailto:${encodeURIComponent(recipientEmail)}?subject=${subject}&body=${body}`;
-
-                // Open mail client
-                window.location.href = mailto;
-
-                // Update status
-                statusDiv.className = 'status-message status-success';
-                statusDiv.textContent = '✓ PDF generated and mail client opened. Attach the downloaded file and send.';
-
-                // Close dialog after short delay
-                setTimeout(() => {
-                    closeEmailDialog();
-                    document.getElementById('recipientEmail').value = '';
-                    document.getElementById('senderEmail').value = '';
-                    document.getElementById('emailMessage').value = '';
-                    statusDiv.style.display = 'none';
-                }, 2200);
-
-            } catch (error) {
-                console.error('Email sending error:', error);
-                const statusDiv = document.getElementById('emailStatus');
-                statusDiv.style.display = 'block';
-                statusDiv.className = 'status-message status-error';
-                statusDiv.textContent = '❌ Viga e-maili saatmisel';
-            }
-        }
-
-        // Drag and drop support for photo upload
-        const uploadSection = document.getElementById('uploadSection');
-        if (uploadSection) {
-            uploadSection.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('dragover');
-            });
-
-            uploadSection.addEventListener('dragleave', function() {
-                this.classList.remove('dragover');
-            });
-
-            uploadSection.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    // Attempt to set the input.files using DataTransfer (supported in modern browsers)
-                    const input = document.getElementById('machinePhoto');
-                    try {
-                        const dt = new DataTransfer();
-                        for (let i = 0; i < files.length; i++) dt.items.add(files[i]);
-                        input.files = dt.files;
-                    } catch (err) {
-                        // Fallback: not all environments allow assigning input.files
-                        console.warn('Could not set input.files programmatically', err);
+                // Show detailed error in UI so user can debug when running locally
+                const resultsEl = document.getElementById('results');
+                if (resultsEl) {
+                    resultsEl.classList.add('show');
+                    // create or update an error box
+                    let errBox = document.getElementById('calcErrorBox');
+                    if (!errBox) {
+                        errBox = document.createElement('div');
+                        errBox.id = 'calcErrorBox';
+                        errBox.style.background = '#ffefef';
+                        errBox.style.color = '#660000';
+                        errBox.style.border = '1px solid #ff4444';
+                        errBox.style.padding = '10px';
+                        errBox.style.margin = '10px 0';
+                        errBox.style.whiteSpace = 'pre-wrap';
+                        resultsEl.insertBefore(errBox, resultsEl.firstChild);
                     }
-                    // Call handler with the FileList
-                    handlePhotoUpload({ target: { files: files } });
+                    errBox.textContent = 'Arvutusviga: ' + (error && error.message ? error.message : String(error)) + '\nVaadake konsooli täpsema info saamiseks.';
+                } else {
+                    alert('Arvutusviga: ' + (error && error.message ? error.message : String(error)));
                 }
-            });
-        }
-
-        // Improved photo upload handler: accept event or direct FileList/Array
-        function handlePhotoUpload(eventOrFiles) {
-            try {
-                // Normalize files
-                let files = null;
-                if (!eventOrFiles) return;
-                if (eventOrFiles.target && eventOrFiles.target.files) files = eventOrFiles.target.files;
-                else if (eventOrFiles instanceof FileList) files = eventOrFiles;
-                else if (Array.isArray(eventOrFiles)) files = eventOrFiles;
-                else if (eventOrFiles.files) files = eventOrFiles.files;
-                if (!files || files.length === 0) return;
-
-                const file = files[0];
-                const uploadSection = document.getElementById('uploadSection');
-                const imageContainer = document.getElementById('imageContainer');
-
-                // Validate file size (max 5MB)
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if (file.size > maxSize) {
-                    alert('❌ Pilt on liiga suur. Maksimum 5MB.');
-                    // Clear input if present
-                    const input = document.getElementById('machinePhoto'); if (input) input.value = '';
-                    return;
-                }
-
-                // Validate file type
-                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-                if (!validTypes.includes(file.type)) {
-                    alert('❌ Vale piltide vorming. Kasutage PNG, JPG või GIF.');
-                    const input = document.getElementById('machinePhoto'); if (input) input.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imageContainer.innerHTML = '';
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'uploaded-image';
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.textContent = '✕ Eemalda pilt';
-                    removeBtn.style.cssText = `
-                    display: block;
-                    width: 100%;
-                    margin-top: 8px;
-                    padding: 6px;
-                    background: var(--accent-red);
-                    color: #fff;
-                    border: 1px solid var(--accent-red);
-                    border-radius: 3px;
-                    cursor: pointer;
-                    font-size: 0.75em;
-                    text-transform: uppercase;
-                    font-family: Consolas, monospace;
-                    transition: all 0.2s;
-                `;
-                    removeBtn.onmouseover = function() { this.style.background = '#ff6666'; };
-                    removeBtn.onmouseout = function() { this.style.background = 'var(--accent-red)'; };
-                    removeBtn.onclick = function() {
-                        imageContainer.innerHTML = '<div class="photo-placeholder">Ükski pilt pole üles laaditud</div>';
-                        const input = document.getElementById('machinePhoto'); if (input) input.value = '';
-                        uploadSection.style.borderColor = 'var(--border-color)';
-                    };
-
-                    imageContainer.appendChild(img);
-                    imageContainer.appendChild(removeBtn);
-                    uploadSection.style.borderColor = 'var(--accent-green)';
-                };
-                reader.readAsDataURL(file);
-            } catch (ex) {
-                console.error('handlePhotoUpload error', ex);
             }
         }
-
-        function updateParametersTable() {
-            // Clear existing table rows
-            const tbody = document.getElementById('paramsTableBody');
-            if (tbody) {
-                tbody.innerHTML = '';
-            }
-
-            // Get current and new tool parameters
-            const currentParams = [
-                { label: 'D - Tööriista diameeter (mm)', current: document.getElementById('currentDiameter').value, new: document.getElementById('newDiameter').value },
-                { label: 'VC - joonkiirus (m/min)', current: document.getElementById('currentVC').value, new: document.getElementById('newVC').value },
-                { label: 'Ap - lõikesügavus (mm)', current: document.getElementById('currentAp').value, new: document.getElementById('newAp').value },
-                { label: 'S - RPM', current: document.getElementById('currentRPM').value, new: document.getElementById('newRPM').value },
-                { label: 'F - mm/min', current: document.getElementById('currentFeed').value, new: document.getElementById('newFeed').value },
-                { label: 'Ae - lõikelaius (mm)', current: document.getElementById('currentAe').value, new: document.getElementById('newAe').value }
-            ];
-
-            // Add rows to the table
-            currentParams.forEach(param => {
-                const row = document.createElement('tr');
-                row.style.borderBottom = '1px solid #404040';
-                row.innerHTML = `
-          <td style="padding: 8px; color: #e0e0e0; font-size: 0.85em;">${param.label}</td>
-          <td style="padding: 8px; text-align: center;">
-            <div style="position: relative;">
-              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;">Hetkel</div>
-              <input type="text" value="${param.current}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
-            </div>
-          </td>
-          <td style="padding: 8px; text-align: center;">
-            <div style="position: relative;">
-              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;">Uus</div>
-              <input type="text" value="${param.new}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
-            </div>
-          </td>
-        `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Language selector wiring and initialization
-        (function initTranslations() {
-            const langSelect = document.getElementById('langSelect');
-            const stored = localStorage.getItem('toolboss_lang') || 'et';
-            if (langSelect) {
-                // set the select value
-                langSelect.value = stored;
-                langSelect.addEventListener('change', async function() {
-                    const lang = this.value || 'et';
-                    localStorage.setItem('toolboss_lang', lang);
-                    try { await applyTranslations(lang); } catch(e) { console.warn(e); }
-                });
-            }
-
-            // Apply translations on load
-            document.addEventListener('DOMContentLoaded', async function() {
-                const lang = localStorage.getItem('toolboss_lang') || 'et';
-                try { await applyTranslations(lang); } catch(e) { console.warn('applyTranslations failed', e); }
-            });
-        })();
     </script>
 </div>
 </body>
