@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Venten ToolBoss</title>
+    <!-- Favicon: use site logo as fallback to avoid 404 on favicon requests -->
+    <link rel="icon" href="https://www.venten.ee/static/version1769687684/frontend/Zaproo/venten/et_EE/images/logo.png" type="image/png">
     <style>
         :root {
             --bg-primary: #1a1a1a;
@@ -1048,17 +1050,17 @@
             <h2 class="dialog-title">📧 SAADA RAPORT E-MAILILE</h2>
 
             <div class="form-group">
-                <label class="form-label">Saaja e-mail:</label>
+                <label class="form-label" for="recipientEmail">Saaja e-mail:</label>
                 <input type="email" id="recipientEmail" placeholder="example@company.com" class="form-input">
             </div>
 
             <div class="form-group">
-                <label class="form-label">Sinu e-mail (koopia):</label>
+                <label class="form-label" for="senderEmail">Sinu e-mail (koopia):</label>
                 <input type="email" id="senderEmail" placeholder="your@email.com (valikuline)" class="form-input">
             </div>
 
             <div class="form-group">
-                <label class="form-label">Lisateade (valikuline):</label>
+                <label class="form-label" for="emailMessage">Lisateade (valikuline):</label>
                 <textarea id="emailMessage" placeholder="Täiendav info..." class="form-textarea"></textarea>
             </div>
 
@@ -1110,6 +1112,19 @@
             window._currentLang = lang;
             const t = await loadTranslations(lang);
 
+            // Helper to safely set text or HTML for a selector if element exists
+            const safeSet = (sel, value, asHtml = false) => {
+                try {
+                    const el = document.querySelector(sel);
+                    if (!el || value === undefined) return false;
+                    if (asHtml) el.innerHTML = value; else el.textContent = value;
+                    return true;
+                } catch (e) {
+                    console.warn('safeSet failed for', sel, e);
+                    return false;
+                }
+            };
+
             // simple selector -> key map for common elements
             const selectorMap = {
                 'h1': 'header.title',
@@ -1124,13 +1139,10 @@
             };
 
             Object.keys(selectorMap).forEach(sel => {
-                const el = document.querySelector(sel);
-                if (!el) return;
                 const key = selectorMap[sel];
-                if (key && t[key]) {
-                    if (sel === '.footer-credit' || sel === '.footer-developer') el.innerHTML = t[key];
-                    else el.textContent = t[key];
-                }
+                if (!key || !t[key]) return;
+                const asHtml = (sel === '.footer-credit' || sel === '.footer-developer');
+                safeSet(sel, t[key], asHtml);
             });
 
             // Section headings by order (keeps existing behavior)
@@ -1204,9 +1216,28 @@
             });
 
             // Modal labels
-            if (t['modal.recipientEmail']) document.querySelector('#emailModal .form-group:nth-child(1) .form-label').textContent = t['modal.recipientEmail'];
-            if (t['modal.senderEmail']) document.querySelector('#emailModal .form-group:nth-child(2) .form-label').textContent = t['modal.senderEmail'];
-            if (t['modal.emailMessage']) document.querySelector('#emailModal .form-group:nth-child(3) .form-label').textContent = t['modal.emailMessage'];
+            // safer modal label assignment: select all .form-group inside the modal and update labels if found
+            (function(){
+                try {
+                    const modalGroups = document.querySelectorAll('#emailModal .form-group');
+                    if (modalGroups && modalGroups.length > 0) {
+                        if (t['modal.recipientEmail'] && modalGroups[0]) {
+                            const lab = modalGroups[0].querySelector('.form-label') || modalGroups[0].querySelector('label');
+                            if (lab) lab.textContent = t['modal.recipientEmail'];
+                        }
+                        if (t['modal.senderEmail'] && modalGroups[1]) {
+                            const lab = modalGroups[1].querySelector('.form-label') || modalGroups[1].querySelector('label');
+                            if (lab) lab.textContent = t['modal.senderEmail'];
+                        }
+                        if (t['modal.emailMessage'] && modalGroups[2]) {
+                            const lab = modalGroups[2].querySelector('.form-label') || modalGroups[2].querySelector('label');
+                            if (lab) lab.textContent = t['modal.emailMessage'];
+                        }
+                    }
+                } catch (e) {
+                    console.warn('applyTranslations: modal label update failed', e);
+                }
+            })();
 
             // Upload section labels
             if (t['upload.label']) {
@@ -1259,25 +1290,26 @@
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
-        const htmlElement = document.documentElement;
-
-        // Check for saved theme preference or default to dark mode
-        const currentTheme = localStorage.getItem('theme') || 'dark';
-        if (currentTheme === 'light') {
-            document.body.classList.add('light-mode');
-            themeToggle.checked = true;
-        }
-
-        // Listen for toggle changes
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
+        // Some embed/dev hosts may remove the toggle; guard accesses
+        if (themeToggle) {
+            // Check for saved theme preference or default to dark mode
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            if (currentTheme === 'light') {
                 document.body.classList.add('light-mode');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.body.classList.remove('light-mode');
-                localStorage.setItem('theme', 'dark');
+                try { themeToggle.checked = true; } catch (e) {}
             }
-        });
+
+            // Listen for toggle changes
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.add('light-mode');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.body.classList.remove('light-mode');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
 
         // --- TRANSLATIONS: provide local defaults and wire language selector ---
         const builtInTranslations = {
@@ -2287,7 +2319,98 @@
             }
         }
 
-        try { window.generatePDFReport = generatePDFReport; } catch (e) { window.generatePDFReport = function(){ console.error('generatePDFReport not available', e); }; }
+        // Show email modal dialog (simple show/hide implementation)
+        function showEmailDialog() {
+            try {
+                const modal = document.getElementById('emailModal');
+                if (!modal) return;
+                modal.style.display = 'block';
+                // optional backdrop styling
+                modal.style.position = 'fixed';
+                modal.style.left = 0;
+                modal.style.top = 0;
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.background = 'rgba(0,0,0,0.5)';
+                modal.style.zIndex = 9999;
+                const content = modal.querySelector('.dialog-content');
+                if (content) {
+                    content.style.position = 'relative';
+                    content.style.margin = '6% auto';
+                    content.style.maxWidth = '480px';
+                    content.style.background = 'var(--bg-secondary)';
+                    content.style.padding = '18px';
+                    content.style.border = '1px solid var(--border-color)';
+                }
+                const rcpt = document.getElementById('recipientEmail'); if (rcpt) rcpt.focus();
+                const status = document.getElementById('emailStatus'); if (status) { status.textContent = ''; status.style.display = 'block'; }
+            } catch (e) { console.warn('showEmailDialog error', e); }
+        }
+
+        function closeEmailDialog() {
+            try {
+                const modal = document.getElementById('emailModal');
+                if (!modal) return;
+                modal.style.display = 'none';
+                // clear status
+                const status = document.getElementById('emailStatus'); if (status) { status.textContent = ''; }
+            } catch (e) { console.warn('closeEmailDialog error', e); }
+        }
+
+        // sendEmail: generate PDF and prompt the user to download it, then open mail client with prefilled fields
+        async function sendEmail() {
+            try {
+                const rcpt = (document.getElementById('recipientEmail') || {}).value || '';
+                const sender = (document.getElementById('senderEmail') || {}).value || '';
+                const msg = (document.getElementById('emailMessage') || {}).value || '';
+                const status = document.getElementById('emailStatus');
+
+                if (!rcpt) {
+                    if (status) status.textContent = 'Palun sisesta saaja e-mail.';
+                    return;
+                }
+
+                if (status) status.textContent = 'Genereerin PDF...';
+
+                // Try structured PDF first; if it fails, use screenshot fallback
+                let blob = null;
+                try { blob = await generateStructuredPDF(); } catch (structuredErr) {
+                    console.warn('Structured PDF failed, falling back to screenshot', structuredErr);
+                    try { blob = await generatePDFBlob(); } catch (bErr) { throw new Error('PDF generation failed: ' + (bErr && bErr.message)); }
+                }
+
+                if (!blob) throw new Error('PDF generation returned no blob');
+
+                // Create blob url and open so user can download/attach manually
+                const url = URL.createObjectURL(blob);
+                // open in new tab for preview
+                window.open(url, '_blank');
+
+                // Prefill mailto with subject/body; note: mailto cannot attach files programmatically — user must attach the downloaded PDF
+                const subject = encodeURIComponent('Venten ToolBoss raport');
+                const bodyLines = [];
+                bodyLines.push('Tere,');
+                if (msg) bodyLines.push(msg);
+                bodyLines.push('Palun leiate raport lisatud (palun lisage PDF fail, kui brauser ei kinnita seda automaatselt).');
+                bodyLines.push('---');
+                bodyLines.push('Automaatne sõnum: ToolBoss');
+                const body = encodeURIComponent(bodyLines.join('\n'));
+                const mailto = `mailto:${encodeURIComponent(rcpt)}?subject=${subject}&body=${body}`;
+
+                // Open mail client compose window
+                window.location.href = mailto;
+
+                if (status) status.textContent = 'PDF loodud ja avatud uues vaates. Palun kinnita e-kirja saatmine oma e-posti kliendis.';
+            } catch (err) {
+                console.error('sendEmail error', err);
+                const status = document.getElementById('emailStatus'); if (status) status.textContent = 'E-kirja saatmine ebaõnnestus: ' + (err && err.message ? err.message : String(err));
+            }
+        }
+
+        // Expose email dialog functions globally
+        try { window.showEmailDialog = showEmailDialog; } catch (e) {}
+        try { window.closeEmailDialog = closeEmailDialog; } catch (e) {}
+        try { window.sendEmail = sendEmail; } catch (e) {}
     </script>
 </div>
 </body>
