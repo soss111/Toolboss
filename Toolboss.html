@@ -566,7 +566,26 @@
             font-size: 0.9em;
         }
 
-        /* ...existing styles... */
+        /* Modal styles: keep dialog hidden by default to avoid layout shifts */
+        .dialog-container { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); z-index: 9999; }
+        .dialog-container.show { display: flex; }
+        .dialog-content { background: var(--bg-secondary); padding: 18px; border-radius: 6px; border: 1px solid var(--border-color); max-width: 520px; width: calc(100% - 40px); box-shadow: 0 6px 30px rgba(0,0,0,0.6); }
+        .btn-base { padding: 10px; border-radius: 4px; cursor: pointer; }
+        .btn-close { background: #333; color: #fff; border: 1px solid #444; }
+        .btn-send { background: #0088ff; color: #fff; border: 1px solid #0077dd; }
+        /* Upload image styles */
+        .uploaded-image-container { display:flex; flex-direction:column; gap:8px; align-items:center; }
+        .uploaded-image { max-width: 100%; max-height: 160px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; }
+        .upload-btn { padding: 8px 10px; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; }
+        .upload-btn:hover { background: var(--accent-green); color: #000; }
+        /* Footer improvements */
+        .footer-wrapper { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 18px; border-top:1px solid var(--border-color); color:var(--text-secondary); }
+        .footer-credit a, .footer-developer a { color: var(--accent-blue); text-decoration: none; }
+        .footer-developer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .content { padding: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -1450,6 +1469,39 @@
             }
         }
 
+        // Efficiency bar updater (defined before calculateEfficiency to avoid ReferenceError)
+        function updateEfficiencyBars(currentValue, newValue) {
+            try {
+                const currentBar = document.getElementById('currentEffBar');
+                const newBar = document.getElementById('newEffBar');
+                // Normalize to percentage numbers
+                const c = (typeof currentValue === 'number') ? currentValue : (parseFloat(currentValue) || 0);
+                const n = (typeof newValue === 'number') ? newValue : (parseFloat(newValue) || 0);
+                if (currentBar) {
+                    currentBar.style.width = Math.max(0, Math.min(200, c)) + '%';
+                    currentBar.textContent = Math.round(c) + '%';
+                }
+                if (newBar) {
+                    newBar.style.width = Math.max(0, Math.min(200, n)) + '%';
+                    newBar.textContent = Math.round(n) + '%';
+                }
+            } catch (e) { console.warn('updateEfficiencyBars error', e); }
+        }
+
+        // Savings indicator updater
+        function updateSavingsIndicator(totalSavings) {
+            try {
+                const el = document.getElementById('savingsIndicator');
+                if (!el) return;
+                const textEl = el.querySelector('.savings-indicator-text');
+                if (textEl) textEl.textContent = 'KOKKUHOID: ' + (isNaN(totalSavings) ? '0 €' : Number(totalSavings).toFixed(0) + ' €');
+                // adjust color based on amount
+                if (totalSavings > 0) el.style.borderLeft = '4px solid var(--accent-green)';
+                else if (totalSavings < 0) el.style.borderLeft = '4px solid var(--accent-red)';
+                else el.style.borderLeft = '4px solid var(--border-color)';
+            } catch (e) { console.warn('updateSavingsIndicator error', e); }
+        }
+
         // Calculate estimated time based on parameters
         function calculateTimeEstimate(tool) {
             // Skip if manual mode is enabled
@@ -2321,41 +2373,24 @@
 
         // Show email modal dialog (simple show/hide implementation)
         function showEmailDialog() {
-            try {
-                const modal = document.getElementById('emailModal');
-                if (!modal) return;
-                modal.style.display = 'block';
-                // optional backdrop styling
-                modal.style.position = 'fixed';
-                modal.style.left = 0;
-                modal.style.top = 0;
-                modal.style.width = '100%';
-                modal.style.height = '100%';
-                modal.style.background = 'rgba(0,0,0,0.5)';
-                modal.style.zIndex = 9999;
-                const content = modal.querySelector('.dialog-content');
-                if (content) {
-                    content.style.position = 'relative';
-                    content.style.margin = '6% auto';
-                    content.style.maxWidth = '480px';
-                    content.style.background = 'var(--bg-secondary)';
-                    content.style.padding = '18px';
-                    content.style.border = '1px solid var(--border-color)';
-                }
-                const rcpt = document.getElementById('recipientEmail'); if (rcpt) rcpt.focus();
-                const status = document.getElementById('emailStatus'); if (status) { status.textContent = ''; status.style.display = 'block'; }
-            } catch (e) { console.warn('showEmailDialog error', e); }
+            try { const modal = document.getElementById('emailModal'); if (!modal) return; modal.classList.add('show'); const rcpt = document.getElementById('recipientEmail'); if (rcpt) rcpt.focus(); const status = document.getElementById('emailStatus'); if (status) { status.textContent = ''; status.style.display = 'block'; } } catch (e) { console.warn('showEmailDialog error', e); }
         }
 
         function closeEmailDialog() {
+            try { const modal = document.getElementById('emailModal'); if (!modal) return; modal.classList.remove('show'); const status = document.getElementById('emailStatus'); if (status) status.textContent = ''; } catch (e) { console.warn('closeEmailDialog error', e); }
+        }
+
+        // Close modal on backdrop click and ESC key
+        (function(){
             try {
                 const modal = document.getElementById('emailModal');
                 if (!modal) return;
-                modal.style.display = 'none';
-                // clear status
-                const status = document.getElementById('emailStatus'); if (status) { status.textContent = ''; }
-            } catch (e) { console.warn('closeEmailDialog error', e); }
-        }
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeEmailDialog();
+                });
+                document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeEmailDialog(); });
+            } catch (e) { console.warn('modal listeners init failed', e); }
+        })();
 
         // sendEmail: generate PDF and prompt the user to download it, then open mail client with prefilled fields
         async function sendEmail() {
