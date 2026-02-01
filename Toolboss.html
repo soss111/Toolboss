@@ -1331,100 +1331,15 @@
         }
 
         // --- TRANSLATIONS: provide local defaults and wire language selector ---
-        const builtInTranslations = {
-            et: {
-                'header.title': '⚙ VENTEN TOOLBOSS v2.0',
-                'header.subtitle': 'TÖÖRIISTADE VÕRDLUS | KULUDE ANALÜÜS | OPTIMISEERIMINE',
-                'footer.text': 'Venten ToolBoss v2.0',
-                'footer.credit': '© 2026 Venten OÜ | <a href="https://www.venten.ee" target="_blank">www.venten.ee</a>',
-                'footer.developer': 'Developed by <a href="mailto:laurisoosaar@gmail.com">YRGEL</a>',
-                'btn.calculate': '► ARVUTA EFEKTIIVSUS',
-                'btn.pdf': '📄 GENEREERI PDF',
-                'btn.email': '✉️ SAADA E-MAILILE',
-                'section.results': '[ ANALÜÜSI TULEMUSED ]',
-                'section.projectinfo': '[ PROJEKTI INFO ]',
-                'section.machine': '[ MASINA PARAM ]',
-                'section.comparison': '[ TÖÖRIISTADE VÕRDLUS ]',
-                'modal.recipientEmail': 'Saaja e-mail:',
-                'modal.senderEmail': 'Sinu e-mail (koopia):',
-                'modal.emailMessage': 'Lisateade (valikuline):',
-                'chart.noData': 'Andmed puuduvad',
-                'chart.totalLabel': 'KOKKU',
-                'chart.toolSlice': 'Tööriist',
-                'chart.timeSlice': 'Aeg',
-                'upload.label': '📤 Laadi üles',
-                'upload.info': 'Max 5MB, PNG/JPG/GIF',
-                'photo.placeholder': 'Ükski pilt pole üles laaditud',
-                'tool.currentHeading': '▼ HETKEL KASUTUSEL',
-                'tool.newHeading': '▲ UUS TÖÖRIIST (VENTEN)',
-                'metric.timeSavings.label': 'AJAVÕIT (H)',
-                'metric.timeEfficiency.label': 'EFEKT. KASV (%)',
-                'metric.toolQuantity.label': 'TÖÖRIISTU KOKKUHOID',
-                'metric.piecesPerTool.label': 'TÜKKI/TÖÖRIIST Δ',
-                'metric.toolChangeCurrent.label': 'VAHETUSE KULU (HETKEL)',
-                'metric.toolChangeNew.label': 'VAHETUSE KULU (UUS)',
-                'metric.toolChangeSavings.label': 'VAHETUSE KOKKUHOID',
-                'metric.toolCostSavings.label': 'TÖÖRIISTA KULU Δ',
-                'metric.totalSavings.label': 'AASTANE KOKKUHOID KOKKU',
-                'summary.currentLabel': 'CURRENT SYS - ANNUAL COST:',
-                'summary.newLabel': 'NEW TOOL - ANNUAL COST:',
-                'summary.savingsRatioLabel': 'SAVINGS RATIO:',
-                'summary.totalSavingsLabel': 'TOTAL ANNUAL SAVINGS:',
-                'label.cutParams': 'LÕIKEPARAMEETRID',
-                'label.recommendedLife': 'SOOVITUSLIK ELUIGA:',
-                'label.timePerPartDesc': 'Ajakulu/tk (sekundit) - arvutatakse automaatselt',
-                'upload.button': 'Laadi pilt',
-                'upload.info': 'PNG, JPG, GIF (max 5MB) - Masina sildilt pilt'
-            },
-            en: {
-                'header.title': '⚙ VENTEN TOOLBOSS v2.0',
-                'header.subtitle': 'TOOL COMPARISON | COST ANALYSIS | OPTIMISATION',
-                'footer.text': 'Venten ToolBoss v2.0',
-                'footer.credit': '© 2026 Venten OÜ | <a href="https://www.venten.ee" target="_blank">www.venten.ee</a>',
-                'footer.developer': 'Developed by <a href="mailto:laurisoosaar@gmail.com">YRGEL</a>',
-                'btn.calculate': '► CALCULATE EFFICIENCY',
-                'btn.pdf': '📄 GENERATE PDF',
-                'btn.email': '✉️ SEND BY EMAIL',
-                'section.results': '[ ANALYSIS RESULTS ]',
-                'section.projectinfo': '[ PROJECT INFO ]',
-                'section.machine': '[ MACHINE PARAMS ]',
-                'section.comparison': '[ TOOL COMPARISON ]',
-                'modal.recipientEmail': 'Recipient email:',
-                'modal.senderEmail': 'Your email (cc):',
-                'modal.emailMessage': 'Additional message (optional):',
-                'chart.noData': 'No data',
-                'chart.totalLabel': 'TOTAL',
-                'chart.toolSlice': 'Tool',
-                'chart.timeSlice': 'Time',
-                'upload.label': '📤 Upload',
-                'upload.info': 'Max 5MB, PNG/JPG/GIF',
-                'photo.placeholder': 'No image uploaded',
-                'tool.currentHeading': '▼ CURRENTLY IN USE',
-                'tool.newHeading': '▲ NEW TOOL (VENTEN)',
-                'metric.timeSavings.label': 'TIME SAVINGS (H)',
-                'metric.timeEfficiency.label': 'EFFICIENCY GAIN (%)',
-                'metric.toolQuantity.label': 'TOOL QUANTITY SAVINGS',
-                'metric.piecesPerTool.label': 'PIECES PER TOOL Δ',
-                'metric.toolChangeCurrent.label': 'CHANGEOVER COST (CURRENT)',
-                'metric.toolChangeNew.label': 'CHANGEOVER COST (NEW)',
-                'metric.toolChangeSavings.label': 'CHANGEOVER SAVINGS',
-                'metric.toolCostSavings.label': 'TOOL COST Δ',
-                'metric.totalSavings.label': 'ANNUAL TOTAL SAVINGS',
-                'summary.currentLabel': 'CURRENT SYS - ANNUAL COST:',
-                'summary.newLabel': 'NEW TOOL - ANNUAL COST:',
-                'summary.savingsRatioLabel': 'SAVINGS RATIO:',
-                'summary.totalSavingsLabel': 'TOTAL ANNUAL SAVINGS:',
-                'label.cutParams': 'CUT PARAMETERS',
-                'label.recommendedLife': 'RECOMMENDED LIFE:',
-                'label.timePerPartDesc': 'Time per part (s) - auto-calculated',
-                'upload.button': 'Upload photo',
-                'upload.info': 'PNG, JPG, GIF (max 5MB) - Photo of machine label'
-            }
-        };
-
+        // Use external JSON files under /translations/*.json for translations.
+        // When served via HTTP the files `translations/et.json` and `translations/en.json` are loaded by `loadTranslations()`.
+        // For local file:// editing, translations may not be available; in that case `loadTranslations()` will return an empty object and
+        // `applyTranslations()` will leave existing static text in place.
+        //
+        // Built-in translations are removed to avoid duplicate keys; use external files only.
         // Ensure default translation objects exist so applyTranslations has something to merge
-        translations.et = Object.assign({}, builtInTranslations.et, translations.et || {});
-        translations.en = Object.assign({}, builtInTranslations.en, translations.en || {});
+        translations.et = Object.assign({}, translations.et || {});
+        translations.en = Object.assign({}, translations.en || {});
 
         // Wire the language selector and apply language on load
         (function() {
@@ -1723,7 +1638,7 @@
                 const newPiecesPerTool = (newCutLength > 0 && newToolLife > 0) ? Math.floor(newToolLife * 1000 / newCutLength) : 0;
 
                 const currentToolQuantityNeeded = currentPiecesPerTool > 0 ? Math.ceil(yearlyQuantity / currentPiecesPerTool) : 0;
-                const newToolQuantityNeeded = newPiecesPerTool > 0 ? Math.ceil(yearlyQuantity / newPiecesPerTool) : 0;
+                const newToolQuantityNeeded = newPiecesPerTool >  0 ? Math.ceil(yearlyQuantity / newPiecesPerTool) : 0;
 
                 // Update UI safely
                 const safeSetText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
@@ -2175,76 +2090,100 @@
                 if (!jsPDF) throw new Error('jsPDF library is missing');
 
                 const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-                const marginLeft = 15;
+                const marginLeft = 18;
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const usableWidth = pageWidth - marginLeft * 2;
-                let y = 15;
+                let y = 18;
 
-                // Header
-                pdf.setFontSize(14);
-                pdf.setTextColor('#00aa00');
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('Venten ToolBoss - Raport', marginLeft, y);
+                // Cover page
+                try {
+                    // logo on top-right (external link may be blocked if not allowed by CORS; ignore on failure)
+                    const logoUrl = 'https://www.venten.ee/static/version1769687684/frontend/Zaproo/venten/et_EE/images/logo.png';
+                    // attempt to fetch image as blob and embed
+                    try {
+                        const resp = await fetch(logoUrl, { mode: 'cors' });
+                        if (resp.ok) {
+                            const blob = await resp.blob();
+                            const dataUrl = await new Promise((res, rej) => {
+                                const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(blob);
+                            });
+                            pdf.addImage(dataUrl, 'PNG', pageWidth - marginLeft - 36, 12, 36, 36);
+                        }
+                    } catch (e) { /* ignore logo embedding errors */ }
 
-                const dateStr = (document.getElementById('testDate') && document.getElementById('testDate').value) || new Date().toISOString().slice(0, 10);
-                pdf.setFontSize(10);
-                pdf.setTextColor('#888888');
-                pdf.setFont('helvetica', 'normal');
-                pdf.text(`Kuupäev: ${dateStr}`, pageWidth - marginLeft - 60, y);
-                y += 8;
+                    pdf.setFontSize(22);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setTextColor('#00aa00');
+                    pdf.text('Venten ToolBoss', marginLeft, 50);
+                    pdf.setFontSize(12);
+                    pdf.setTextColor('#888888');
+                    pdf.setFont('helvetica','normal');
+                    const subtitle = (document.getElementById('machine') || {}).value || 'Tool comparison report';
+                    pdf.text(subtitle, marginLeft, 58);
+                    pdf.setDrawColor(220);
+                    pdf.setLineWidth(0.5);
+                    pdf.line(marginLeft, 68, pageWidth - marginLeft, 68);
+
+                    pdf.setFontSize(10);
+                    pdf.setTextColor('#666');
+                    pdf.text('Generated: ' + ((document.getElementById('testDate') && document.getElementById('testDate').value) || new Date().toISOString().slice(0,10)), marginLeft, 78);
+                    pdf.addPage();
+                    y = 18;
+                } catch (e) { console.warn('Cover generation failed', e); }
 
                 // Project info
                 pdf.setFontSize(11);
-                pdf.setTextColor('#ffffff');
-                pdf.setFillColor(10, 10, 10);
-                pdf.rect(marginLeft - 2, y - 6, usableWidth + 4, 8, 'F');
-                pdf.setTextColor('#00ff41');
-                pdf.text('Projekti info', marginLeft, y);
-                y += 6;
+                pdf.setTextColor('#00aa00');
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Project information', marginLeft, y);
+                y += 8;
 
                 pdf.setFontSize(10);
-                pdf.setTextColor('#e0e0e0');
+                pdf.setTextColor('#222');
+                pdf.setFont('helvetica', 'normal');
                 const read = id => (document.getElementById(id) ? (document.getElementById(id).value || '') : '');
                 const pairs = [
-                    ['Klient', read('client')],
-                    ['Kliendi esindaja', read('clientRep')],
-                    ['Müügiesindaja', read('salesRep')],
-                    ['Masin', read('machine')],
-                    ['Aplikatsioon', read('application')],
-                    ['Materjal', read('material')],
-                    ['Lõikevedelik', read('coolant')]
+                    ['Client', read('client')],
+                    ['Client rep', read('clientRep')],
+                    ['Sales rep', read('salesRep')],
+                    ['Machine', read('machine')],
+                    ['Application', read('application')],
+                    ['Material', read('material')],
+                    ['Coolant', read('coolant')]
                 ];
 
                 pairs.forEach(([k, v]) => {
-                    if (y > 270) { pdf.addPage(); y = 15; }
-                    pdf.setFont('helvetica', 'bold'); pdf.setTextColor('#888'); pdf.text(k + ':', marginLeft, y);
-                    pdf.setFont('helvetica', 'normal'); pdf.setTextColor('#e0e0e0'); pdf.text(String(v), marginLeft + 45, y);
-                    y += 6;
+                    if (y > 260) { pdf.addPage(); y = 15; }
+                    pdf.setFont('helvetica', 'bold'); pdf.setTextColor('#444'); pdf.text(k + ':', marginLeft, y);
+                    pdf.setFont('helvetica', 'normal'); pdf.setTextColor('#111'); pdf.text(String(v), marginLeft + 50, y);
+                    y += 7;
                 });
-                y += 4;
+                y += 6;
 
                 // Tool comparison summary table header
                 pdf.setFontSize(11);
-                pdf.setTextColor('#00ff41');
+                pdf.setTextColor('#00aa00');
                 pdf.setFont('helvetica', 'bold');
-                pdf.text('Tööriistade kokkuvõte', marginLeft, y);
-                y += 6;
+                pdf.text('Tool comparison summary', marginLeft, y);
+                y += 8;
 
-                // Simple table: Parameter | Current | New
-                const tableCols = [60, 55, 55]; // widths
+                // Simple table: Parameter | Current | New (draw lines and header background)
+                const tableCols = [70, 60, 60]; // widths
                 const tableStartX = marginLeft;
                 const colX = [tableStartX, tableStartX + tableCols[0], tableStartX + tableCols[0] + tableCols[1]];
 
-                pdf.setFontSize(9);
-                pdf.setTextColor('#888');
+                pdf.setFillColor(240, 240, 240);
+                pdf.rect(tableStartX - 2, y - 6, usableWidth + 4, 8, 'F');
+                pdf.setFontSize(10);
+                pdf.setTextColor('#333');
                 pdf.setFont('helvetica', 'bold');
-                pdf.text('Parameeter', colX[0], y);
-                pdf.text('Hetkel', colX[1], y);
-                pdf.text('Uus', colX[2], y);
-                y += 5;
+                pdf.text('Parameter', colX[0], y);
+                pdf.text('Current', colX[1], y);
+                pdf.text('New', colX[2], y);
+                y += 8;
 
                 pdf.setFont('helvetica', 'normal');
-                pdf.setTextColor('#e0e0e0');
+                pdf.setTextColor('#111');
 
                 const params = [
                     ['D (mm)', read('currentDiameter') || '-', read('newDiameter') || '-'],
@@ -2256,18 +2195,19 @@
                 ];
 
                 params.forEach(row => {
-                    if (y > 265) { pdf.addPage(); y = 20; }
+                    if (y > 260) { pdf.addPage(); y = 18; }
                     pdf.text(String(row[0]), colX[0], y);
                     pdf.text(String(row[1]), colX[1], y);
                     pdf.text(String(row[2]), colX[2], y);
-                    y += 6;
+                    y += 7;
+                    pdf.setDrawColor(220);
+                    pdf.line(tableStartX - 2, y - 4, tableStartX - 2 + usableWidth + 4, y - 4);
                 });
-
                 y += 6;
 
                 // Financial summary
                 pdf.setFontSize(11);
-                pdf.setTextColor('#00ff41');
+                pdf.setTextColor('#00aa00');
                 pdf.setFont('helvetica', 'bold');
                 pdf.text('Finantsilised tulemused', marginLeft, y);
                 y += 6;
@@ -2392,7 +2332,7 @@
             } catch (e) { console.warn('modal listeners init failed', e); }
         })();
 
-        // sendEmail: generate PDF and prompt the user to download it, then open mail client with prefilled fields
+        // sendEmail: generate PDF and POST it to server endpoint /api/send-report so server can send email with attachment
         async function sendEmail() {
             try {
                 const rcpt = (document.getElementById('recipientEmail') || {}).value || '';
@@ -2407,45 +2347,55 @@
 
                 if (status) status.textContent = 'Genereerin PDF...';
 
-                // Try structured PDF first; if it fails, use screenshot fallback
+                // Generate PDF (structured preferred, fallback to screenshot)
                 let blob = null;
                 try { blob = await generateStructuredPDF(); } catch (structuredErr) {
                     console.warn('Structured PDF failed, falling back to screenshot', structuredErr);
-                    try { blob = await generatePDFBlob(); } catch (bErr) { throw new Error('PDF generation failed: ' + (bErr && bErr.message)); }
+                    blob = await generatePDFBlob();
                 }
 
                 if (!blob) throw new Error('PDF generation returned no blob');
 
-                // Create blob url and open so user can download/attach manually
-                const url = URL.createObjectURL(blob);
-                // open in new tab for preview
-                window.open(url, '_blank');
+                // Prepare form data and POST to server endpoint
+                try {
+                    const fd = new FormData();
+                    fd.append('report', blob, 'ToolBoss-report.pdf');
+                    fd.append('to', rcpt);
+                    if (sender) fd.append('cc', sender);
+                    fd.append('message', msg || '');
+                    fd.append('subject', 'Venten ToolBoss raport');
 
-                // Prefill mailto with subject/body; note: mailto cannot attach files programmatically — user must attach the downloaded PDF
-                const subject = encodeURIComponent('Venten ToolBoss raport');
-                const bodyLines = [];
-                bodyLines.push('Tere,');
-                if (msg) bodyLines.push(msg);
-                bodyLines.push('Palun leiate raport lisatud (palun lisage PDF fail, kui brauser ei kinnita seda automaatselt).');
-                bodyLines.push('---');
-                bodyLines.push('Automaatne sõnum: ToolBoss');
-                const body = encodeURIComponent(bodyLines.join('\n'));
-                const mailto = `mailto:${encodeURIComponent(rcpt)}?subject=${subject}&body=${body}`;
-
-                // Open mail client compose window
-                window.location.href = mailto;
-
-                if (status) status.textContent = 'PDF loodud ja avatud uues vaates. Palun kinnita e-kirja saatmine oma e-posti kliendis.';
+                    const res = await fetch('/api/send-report', { method: 'POST', body: fd });
+                    if (!res.ok) {
+                        const text = await res.text();
+                        throw new Error('Server responded with ' + res.status + ': ' + text);
+                    }
+                    const json = await res.json();
+                    if (json && json.success) {
+                        if (status) status.textContent = 'Raport saadetud e-kirjana.';
+                        closeEmailDialog();
+                        return;
+                    } else {
+                        throw new Error('Server did not confirm send.');
+                    }
+                } catch (sendErr) {
+                    console.warn('Server send failed, falling back to mailto/download', sendErr);
+                    // fallback: open PDF in new tab and prefill mailto (user attaches file manually)
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                    const subject = encodeURIComponent('Venten ToolBoss raport');
+                    const bodyLines = [];
+                    bodyLines.push(msg || '');
+                    bodyLines.push('\n(Report generated by Venten ToolBoss. Please attach the downloaded PDF to the email.)');
+                    const body = encodeURIComponent(bodyLines.join('\n'));
+                    window.location.href = `mailto:${encodeURIComponent(rcpt)}?subject=${subject}&body=${body}`;
+                    if (status) status.textContent = 'Serveri saatmine ebaõnnestus; genereeritud PDF on avatud, palun kinnita e-kirja saatmine oma kliendis.';
+                }
             } catch (err) {
                 console.error('sendEmail error', err);
                 const status = document.getElementById('emailStatus'); if (status) status.textContent = 'E-kirja saatmine ebaõnnestus: ' + (err && err.message ? err.message : String(err));
             }
         }
-
-        // Expose email dialog functions globally
-        try { window.showEmailDialog = showEmailDialog; } catch (e) {}
-        try { window.closeEmailDialog = closeEmailDialog; } catch (e) {}
-        try { window.sendEmail = sendEmail; } catch (e) {}
     </script>
 </div>
 </body>
