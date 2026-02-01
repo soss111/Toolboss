@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venten ToolBoss</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #0a0a0a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888;
+            --text-tertiary: #666;
+            --border-color: #404040;
+            --accent-green: #00ff41;
+            --accent-red: #ff4444;
+            --accent-blue: #0088ff;
+            --input-bg: #2a2a2a;
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8e8e8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #d0d0d0;
+            --accent-green: #00aa00;
+            --accent-red: #cc0000;
+            --accent-blue: #0066cc;
+            --input-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background: var(--bg-primary);
+            padding: 15px;
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--bg-primary), var(--bg-secondary));
+            color: var(--accent-green);
+            padding: 15px 25px;
+            border-bottom: 3px solid var(--accent-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            height: 50px;
+            width: auto;
+            max-width: 150px;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Theme Toggle Switch */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-checkbox {
+            display: none;
+        }
+
+        .toggle-label {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-checkbox:checked + .toggle-label {
+            background: var(--accent-green);
+        }
+
+        .toggle-label::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-checkbox:checked + .toggle-label::before {
+            left: 28px;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: opacity 0.3s;
+        }
+
+        .toggle-icon.sun {
+            opacity: 0;
+        }
+
+        .toggle-checkbox:checked + .toggle-label ~ .toggle-icon.sun {
+            opacity: 1;
+        }
+
+        .toggle-checkbox:checked + .toggle-label ~ .toggle-icon.moon {
+            opacity: 0;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 350px 350px 1fr;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .section {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        body.light-mode .section {
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            color: var(--accent-green);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 0.9em;
+            font-family: 'Consolas', monospace;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+        }
+
+        body.light-mode .input-group input:focus,
+        body.light-mode .input-group select:focus {
+            box-shadow: 0 0 5px rgba(0, 170, 0, 0.3);
+        }
+
+        .tool-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .tool-column {
+            background: var(--bg-primary);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tool-column h3 {
+            color: var(--accent-red);
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .new-tool h3 {
+            color: var(--accent-green);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border: 2px solid var(--accent-green);
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .calculate-btn:hover {
+            background: var(--bg-primary);
+            color: var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
+        body.light-mode .calculate-btn {
+            background: var(--accent-green);
+            color: #ffffff;
+        }
+
+        body.light-mode .calculate-btn:hover {
+            background: var(--accent-green);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 170, 0, 0.3);
+        }
+
+        .results {
+            grid-column: 1 / -1;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .metric-card {
+            background: var(--bg-primary);
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .metric-card.positive {
+            border-left-color: var(--accent-green);
+            background: var(--bg-secondary);
+        }
+
+        body.light-mode .metric-card.positive {
+            background: #e8f5e9;
+        }
+
+        .metric-card.negative {
+            border-left-color: var(--accent-red);
+            background: var(--bg-secondary);
+        }
+
+        body.light-mode .metric-card.negative {
+            background: #ffebee;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin: 6px 0;
+            font-family: 'Consolas', monospace;
+        }
+
+        .metric-card.negative .metric-value {
+            color: var(--accent-red);
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chart-container {
+            background: var(--bg-primary);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .chart-container h3 {
+            color: var(--accent-green);
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .comparison-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .comparison-item {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--border-color);
+        }
+
+        .comparison-item.current {
+            border-left-color: var(--accent-red);
+        }
+
+        .comparison-item.new {
+            border-left-color: var(--accent-green);
+        }
+
+        .comparison-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--accent-green);
+            font-family: 'Consolas', monospace;
+        }
+
+        .comparison-item.current .comparison-value {
+            color: var(--accent-red);
+        }
+
+        .comparison-label {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary {
+            background: var(--bg-primary);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .summary h3 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--accent-green);
+            margin-top: 5px;
+            padding-top: 10px;
+            border-top: 2px solid var(--border-color);
+        }
+
+        @media (max-width: 1400px) {
+            .content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .efficiency-bar-wrapper {
+            margin-bottom: 12px;
+        }
+
+        .efficiency-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            text-transform: uppercase;
+        }
+
+        .efficiency-bar-bg {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            height: 30px;
+            position: relative;
+        }
+
+        .efficiency-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 700;
+            transition: width 1s ease;
+            font-size: 0.8em;
+        }
+
+        .efficiency-bar.current-eff {
+            background: var(--accent-red);
+            width: 100%;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+        }
+
+        .efficiency-bar.new-eff {
+            background: var(--accent-green);
+            width: 100%;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .pie-legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin: 0 10px;
+            font-size: 0.75em;
+            color: var(--text-secondary);
+        }
+
+        .pie-legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .savings-indicator {
+            text-align: center;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1em;
+            border: 2px solid var(--border-color);
+        }
+
+        .savings-indicator.positive {
+            background: var(--bg-secondary);
+            border-color: var(--accent-green);
+        }
+
+        body.light-mode .savings-indicator.positive {
+            background: #e8f5e9;
+        }
+
+        .savings-indicator.negative {
+            background: var(--bg-secondary);
+            border-color: var(--accent-red);
+        }
+
+        body.light-mode .savings-indicator.negative {
+            background: #ffebee;
+        }
+
+        .savings-indicator-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .savings-indicator-text {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin: 5px 0;
+            color: var(--accent-green);
+        }
+
+        .savings-indicator.negative .savings-indicator-text {
+            color: var(--accent-red);
+        }
+
+        .savings-indicator-subtext {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        canvas {
+            background: var(--bg-tertiary);
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-info-display {
+            margin-top: 15px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent-green);
+            text-align: center;
+        }
+
+        .current-tool .tool-info-display {
+            border-color: var(--accent-red);
+        }
+
+        .tool-info-label {
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .tool-info-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--accent-green);
+            font-family: 'Consolas', monospace;
+        }
+
+        .current-tool .tool-info-value {
+            color: var(--accent-red);
+        }
+
+        /* Dialog styles */
+        .dialog-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dialog-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-green);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+
+        .dialog-title {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Consolas', monospace;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            font-family: 'Consolas', monospace;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1em;
+            font-family: 'Consolas', monospace;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .btn-base {
+            padding: 12px;
+            background: var(--bg-primary);
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+            font-size: 0.9em;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Consolas', monospace;
+            transition: all 0.2s;
+        }
+
+        .btn-base:hover {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+        }
+
+        .btn-close {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        .btn-close:hover {
+            background: #ff6666;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            display: none;
+        }
+
+        .footer-wrapper {
+            background: var(--bg-primary);
+            border-top: 2px solid var(--border-color);
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .footer-credit {
+            color: var(--text-tertiary);
+            font-size: 0.75em;
+            margin-bottom: 8px;
+        }
+
+        .footer-divider {
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .footer-developer {
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            margin-bottom: 3px;
+        }
+
+        .footer-email {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.75em;
+            transition: color 0.2s;
+        }
+
+        .footer-email:hover {
+            color: var(--accent-green);
+        }
+
+        .upload-section {
+            margin-top: 15px;
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent-green);
+            background: var(--bg-secondary);
+        }
+
+        .upload-section.dragover {
+            border-color: var(--accent-green);
+            background: var(--bg-secondary);
+        }
+
+        .upload-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border: 2px solid var(--accent-green);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Consolas', monospace;
+            transition: all 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: var(--bg-primary);
+            color: var(--accent-green);
+        }
+
+        .upload-info {
+            margin-top: 10px;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.75em;
+            color: var(--text-secondary);
+        }
+
+        .uploaded-image {
+            margin-top: 10px;
+            max-width: 100%;
+            max-height: 200px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .footer-developer a {
+            color: var(--accent-green);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-weight: 700;
+        }
+
+        .footer-developer a:hover {
+            color: var(--accent-blue);
+        }
+
+        .uploaded-image-container {
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 200px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .photo-placeholder {
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <img src="https://www.venten.ee/static/version1769687684/frontend/Zaproo/venten/et_EE/images/logo.png"
+                 alt="Venten Logo"
+                 class="header-logo"
+                 title="Venten OÜ">
+            <div class="header-title">
+                <h1>⚙ VENTEN TOOLBOSS v2.0</h1>
+                <p>TÖÖRIISTADE VÕRDLUS | KULUDE ANALÜÜS | OPTIMISEERIMINE</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div style="text-align: right; font-size: 0.8em; color: var(--text-secondary);">
+                <div>SYS: ONLINE</div>
+                <div id="currentDateTime"></div>
+            </div>
+            <div class="theme-toggle">
+                <span class="toggle-icon moon">🌙</span>
+                <input type="checkbox" id="themeToggle" class="toggle-checkbox">
+                <label for="themeToggle" class="toggle-label"></label>
+                <span class="toggle-icon sun">☀️</span>
+            </div>
+            <!-- Language selector -->
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label for="langSelect" style="font-size:0.85em; color:var(--text-secondary);">Lang</label>
+                <select id="langSelect" aria-label="Language" style="padding:6px; background:var(--input-bg); color:var(--text-primary); border:1px solid var(--border-color);">
+                    <option value="et">ET</option>
+                    <option value="en">EN</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Project Information -->
+        <div class="section">
+            <h2>[ PROJEKTI INFO ]</h2>
+            <div class="input-group">
+                <label for="client">Klient</label>
+                <input type="text" id="client" placeholder="Näit: Laast Vegas Oü">
+            </div>
+            <div class="input-group">
+                <label for="clientRep">Kliendi esindaja</label>
+                <input type="text" id="clientRep" placeholder="Näit: Tõnu Tolerantsimurdja">
+            </div>
+            <div class="input-group">
+                <label for="salesRep">Müügiesindaja</label>
+                <input type="text" id="salesRep" placeholder="Näit: Toomas Tammer">
+            </div>
+
+
+            <div class="input-group">
+                <label for="testDate">Kuupäev</label>
+                <input type="date" id="testDate">
+            </div>
+            <div class="input-group">
+                <label for="machine">Masin</label>
+                <input type="text" id="machine" placeholder="Näit: Freespink">
+            </div>
+            <div class="input-group">
+                <label for="application">Aplikatsioon</label>
+                <select id="application">
+                    <option value="Freesimine">Freesimine</option>
+                    <option value="Treepink">Treepink</option>
+                    <option value="Puurimine">Puurimine</option>
+                    <option value="Lihvimine">Lihvimine</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="material">Materjal</label>
+                <input type="text" id="material" placeholder="Näit: Alumiinium AW7075">
+            </div>
+            <div class="input-group">
+                <label for="coolant">Lõikevedelik</label>
+                <select id="coolant" onchange="calculateToolLifeEstimate('current'); calculateToolLifeEstimate('new');">
+                    <option value="emulsion">Emulsioon</option>
+                    <option value="oil">Õli</option>
+                    <option value="synthetic">Sünteetiline</option>
+                    <option value="semi-synthetic">Poolsünteetiline</option>
+                    <option value="dry">Kuiv (ilma)</option>
+                    <option value="mql">MQL (minimaalne)</option>
+                    <option value="air">Õhk</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="batchSize">Detailide kogus (partii)</label>
+                <input type="number" id="batchSize" value="3" min="1">
+            </div>
+            <div class="input-group">
+                <label for="yearlyQuantity">Detailide kogus (aastas)</label>
+                <input type="number" id="yearlyQuantity" value="120" min="1">
+            </div>
+        </div>
+
+        <!-- Machine Parameters -->
+        <div class="section">
+            <h2>[ MASINA PARAM ]</h2>
+            <div class="input-group">
+                <label for="machineRate">Masina hind (€/h)</label>
+                <input type="number" id="machineRate" value="90" min="0" step="1">
+            </div>
+            <div class="input-group">
+                <label for="toolChangeTime">Tööriista vahetamise aeg (sekundit)</label>
+                <input type="text" id="toolChangeTime" value="10" style="background: var(--input-bg); color: var(--text-primary);" oninput="evaluateMathExpression(this)">
+            </div>
+            <div class="input-group">
+                <label for="workHours">Töötunnid aastas</label>
+                <input type="number" id="workHours" value="1500" min="1">
+            </div>
+
+            <!-- Machine Label Photo Upload -->
+            <div class="upload-section" id="uploadSection">
+                <label class="upload-label">📸 Masina etikett (foto)</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">
+                    <button class="upload-btn" onclick="document.getElementById('machinePhoto').click();">
+                        Laadi pilt
+                    </button>
+                </div>
+                <div class="upload-info">
+                    PNG, JPG, GIF (max 5MB) - Masina sildilt pilt
+                </div>
+                <div class="uploaded-image-container" id="imageContainer">
+                    <div class="photo-placeholder">Ükski pilt pole üles laaditud</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Comparison -->
+        <div class="section" style="grid-column: 1 / -1;">
+            <h2>[ TÖÖRIISTADE VÕRDLUS ]</h2>
+            <div class="tool-columns">
+                <!-- Current Tool -->
+                <div class="tool-column current-tool">
+                    <h3>▼ HETKEL KASUTUSEL</h3>
+                    <div class="input-group">
+                        <label for="currentToolName">Tööriista nimi</label>
+                        <input type="text" id="currentToolName" placeholder="Näit: noName Hiinakas">
+                    </div>
+                    <div class="input-group">
+                        <label for="currentToolPrice">Tööriista hind (€)</label>
+                        <input type="number" id="currentToolPrice" value="10.90" min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="currentToolLife">Tööriista eluiga meetrites (m)</label>
+                        <input type="number" id="currentToolLife" value="16.43" min="0" step="0.01">
+                        <div style="margin-top: 5px; padding: 8px; background: #0a0a0a; border: 1px solid #404040; border-radius: 4px;">
+                            <div style="font-size: 0.7em; color: #888; margin-bottom: 3px;">SOOVITUSLIK ELUIGA:</div>
+                            <div id="currentLifeEstimate" style="font-size: 0.85em; color: #00ff41;">
+                                Arvutatakse parameetrite põhjal
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="currentCutLength">Lõikepikkus detaili kohta (mm)</label>
+                        <input type="number" id="currentCutLength" value="1000" min="0" step="1"
+                               oninput="document.getElementById('newCutLength').value = this.value; calculateTimeEstimate('current'); calculateTimeEstimate('new');">
+                    </div>
+
+                    <div style="border-top: 1px solid #404040; margin: 15px 0; padding-top: 15px;">
+                        <div style="color: #888; font-size: 0.7em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">LÕIKEPARAMEETRID</div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="currentDiameter">D - Tööriista diameeter (mm)</label>
+                                <input type="number" id="currentDiameter" value="16" min="0" step="0.1" oninput="calculateTimeEstimate('current')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="currentVC">VC - joonkiirus (m/min)</label>
+                                <input type="number" id="currentVC" value="235" min="0" step="1" oninput="calculateTimeEstimate('current')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="currentAp">Ap - lõikesügavus (mm)</label>
+                                <input type="number" id="currentAp" value="0.5" min="0" step="0.1" oninput="calculateTimeEstimate('current')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="currentRPM">S - RPM</label>
+                                <input type="number" id="currentRPM" value="1500" min="0" step="1" oninput="calculateTimeEstimate('current')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="currentFeed">F - mm/min</label>
+                                <input type="number" id="currentFeed" value="5000" min="0" step="1" oninput="calculateTimeEstimate('current')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="currentAe">Ae - lõikelaius (mm)</label>
+                                <input type="number" id="currentAe" value="1.0" min="0" step="0.1" oninput="calculateTimeEstimate('current')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Ajakulu/tk (sekundit) <span style="color: #888; font-size: 0.85em;">- arvutatakse automaatselt</span></label>
+                        <input id="currentTimePerPart" value="88" type="text" readonly
+                               style="background: #1a1a1a; color: #00ff41; cursor: not-allowed;"
+                               title="Arvutatakse lõikepikkuse ja parameetrite põhjal">
+                        <div style="margin-top: 5px;">
+                            <label style="display: inline-flex; align-items: center; cursor: pointer; font-size: 0.75em;">
+                                <input type="checkbox" id="currentManualTime" onchange="toggleManualTime('current')"
+                                       style="margin-right: 5px; cursor: pointer;">
+                                <span style="color: #888;">Sisesta käsitsi</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tool-info-display" id="currentToolInfo">
+                        <div class="tool-info-label">TÖÖRIISTU AASTAS:</div>
+                        <div class="tool-info-value" id="currentToolQuantity">0 tk</div>
+                    </div>
+                </div>
+
+                <!-- New Tool -->
+                <div class="tool-column new-tool">
+                    <h3>▲ UUS TÖÖRIIST (VENTEN)</h3>
+                    <div class="input-group">
+                        <label for="newToolName">Tööriista nimi</label>
+                        <input type="text" id="newToolName" placeholder="Näit: Kennametal">
+                    </div>
+                    <div class="input-group">
+                        <label for="newToolPrice">Tööriista hind (€)</label>
+                        <input type="number" id="newToolPrice" value="10.70" min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="newToolLife">Tööriista eluiga meetrites (m)</label>
+                        <input type="number" id="newToolLife" value="29.75" min="0" step="0.01">
+                        <div style="margin-top: 5px; padding: 8px; background: #0a0a0a; border: 1px solid #404040; border-radius: 4px;">
+                            <div style="font-size: 0.7em; color: #888; margin-bottom: 3px;">SOOVITUSLIK ELUIGA:</div>
+                            <div id="newLifeEstimate" style="font-size: 0.85em; color: #00ff41;">
+                                Arvutatakse parameetrite põhjal
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="newCutLength">Lõikepikkus detaili kohta (mm)</label>
+                        <input type="number" id="newCutLength" value="1000" min="0" step="1">
+                    </div>
+
+                    <div style="border-top: 1px solid #404040; margin: 15px 0; padding-top: 15px;">
+                        <div style="color: #888; font-size: 0.7em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">LÕIKEPARAMEETRID</div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="newDiameter">D - Tööriista diameeter (mm)</label>
+                                <input type="number" id="newDiameter" value="16" min="0" step="0.1" oninput="calculateTimeEstimate('new')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="newVC">VC - joonkiirus (m/min)</label>
+                                <input type="number" id="newVC" value="235" min="0" step="1" oninput="calculateTimeEstimate('new')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="newAp">Ap - lõikesügavus (mm)</label>
+                                <input type="number" id="newAp" value="1.8" min="0" step="0.1" oninput="calculateTimeEstimate('new')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="newRPM">S - RPM</label>
+                                <input type="number" id="newRPM" value="1500" min="0" step="1" oninput="calculateTimeEstimate('new')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="newFeed">F - mm/min</label>
+                                <input type="number" id="newFeed" value="5600" min="0" step="1" oninput="calculateTimeEstimate('new')">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <label for="newAe">Ae - lõikelaius (mm)</label>
+                                <input type="number" id="newAe" value="1.0" min="0" step="0.1" oninput="calculateTimeEstimate('new')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Ajakulu/tk (sekundit) <span style="color: #888; font-size: 0.85em;">- arvutatakse automaatselt</span></label>
+                        <input id="newTimePerPart" value="357" type="text" readonly
+                               style="background: #1a1a1a; color: #00ff41; cursor: not-allowed;"
+                               title="Arvutatakse lõikepikkuse ja parameetrite põhjal">
+                        <div style="margin-top: 5px;">
+                            <label style="display: inline-flex; align-items: center; cursor: pointer; font-size: 0.75em;">
+                                <input type="checkbox" id="newManualTime" onchange="toggleManualTime('new')"
+                                       style="margin-right: 5px; cursor: pointer;">
+                                <span style="color: #888;">Sisesta käsitsi</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tool-info-display" id="newToolInfo">
+                        <div class="tool-info-label">TÖÖRIISTU AASTAS:</div>
+                        <div class="tool-info-value" id="newToolQuantity">0 tk</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateEfficiency()">► ARVUTA EFEKTIIVSUS</button>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <button class="export-btn" onclick="generatePDFReport()" style="
+          padding: 12px;
+          background: #1a1a1a;
+          color: #00ff41;
+          border: 2px solid #00ff41;
+          font-size: 0.9em;
+          font-weight: 700;
+          cursor: pointer;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-family: 'Consolas', monospace;
+          transition: all 0.2s;
+        " onmouseover="this.style.background='#00ff41'; this.style.color='#000';"
+                        onmouseout="this.style.background='#1a1a1a'; this.style.color='#00ff41';">
+                    📄 GENEREERI PDF
+                </button>
+
+                <button class="email-btn" onclick="showEmailDialog()" style="
+          padding: 12px;
+          background: #1a1a1a;
+          color: #0088ff;
+          border: 2px solid #0088ff;
+          font-size: 0.9em;
+          font-weight: 700;
+          cursor: pointer;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-family: 'Consolas', monospace;
+          transition: all 0.2s;
+        " onmouseover="this.style.background='#0088ff'; this.style.color='#000';"
+                        onmouseout="this.style.background='#1a1a1a'; this.style.color='#0088ff';">
+                    ✉️ SAADA E-MAILILE
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section results" id="results" style="grid-column: 1 / -1;">
+            <h2>[ ANALÜÜSI TULEMUSED ]</h2>
+
+            <div class="metrics-grid">
+                <div class="metric-card" id="timeSavingsCard">
+                    <div class="metric-label">AJAVÕIT (H)</div>
+                    <div class="metric-value" id="timeSavings">0</div>
+                </div>
+                <div class="metric-card" id="timeEfficiencyCard">
+                    <div class="metric-label">EFEKT. KASV (%)</div>
+                    <div class="metric-value" id="timeEfficiency">0%</div>
+                </div>
+                <div class="metric-card" id="toolQuantityCard">
+                    <div class="metric-label">TÖÖRIISTU KOKKUHOID</div>
+                    <div class="metric-value" id="toolQuantityDiff">0 tk</div>
+                </div>
+                <div class="metric-card" id="piecesPerToolCard">
+                    <div class="metric-label">TÜKKI/TÖÖRIIST Δ</div>
+                    <div class="metric-value" id="piecesPerToolDiff">+0</div>
+                </div>
+                <div class="metric-card" id="toolChangeCostCurrentCard">
+                    <div class="metric-label">VAHETUSE KULU (HETKEL)</div>
+                    <div class="metric-value" id="toolChangeCurrent">0 €</div>
+                </div>
+                <div class="metric-card" id="toolChangeCostNewCard">
+                    <div class="metric-label">VAHETUSE KULU (UUS)</div>
+                    <div class="metric-value" id="toolChangeNew">0 €</div>
+                </div>
+                <div class="metric-card" id="toolChangeSavingsCard">
+                    <div class="metric-label">VAHETUSE KOKKUHOID</div>
+                    <div class="metric-value" id="toolChangeSavings">0 €</div>
+                </div>
+                <div class="metric-card" id="toolCostSavingsCard">
+                    <div class="metric-label">TÖÖRIISTA KULU Δ</div>
+                    <div class="metric-value" id="toolCostSavings">0 €</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <div class="metric-card positive" id="totalSavingsCard">
+                    <div class="metric-label">AASTANE KOKKUHOID KOKKU</div>
+                    <div class="metric-value" id="totalSavings">0 €</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>[ AASTANE KULU VÕRDLUS - EUR ]</h3>
+                <div class="comparison-list" id="costComparison"></div>
+            </div>
+
+            <div class="chart-container">
+                <h3>[ LÕIKEPARAMEETRITE VÕRDLUS ]</h3>
+                <div id="paramsComparison" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85em;">
+                        <thead>
+                        <tr style="border-bottom: 2px solid #404040;">
+                            <th style="text-align: left; padding: 8px; color: #888; text-transform: uppercase; font-size: 0.75em;">Parameeter</th>
+                            <th style="text-align: center; padding: 8px; color: #ff4444; text-transform: uppercase; font-size: 0.75em;">Hetkel</th>
+                            <th style="text-align: center; padding: 8px; color: #00ff41; text-transform: uppercase; font-size: 0.75em;">Uus</th>
+                            <th style="text-align: center; padding: 8px; color: #888; text-transform: uppercase; font-size: 0.75em;">Δ</th>
+                        </tr>
+                        </thead>
+                        <tbody id="paramsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-container">
+                    <h3>[ TÖÖRIISTA ELUIGA VÕRDLUS - MEETRIT ]</h3>
+                    <div class="comparison-list" id="lifeComparison"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>[ TÜKKI/TÖÖRIIST VÕRDLUS ]</h3>
+                    <div class="comparison-list" id="piecesComparison"></div>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-container">
+                    <h3>[ KOKKUHOIU JAOTUS ]</h3>
+                    <canvas id="savingsPieChart" width="300" height="250"></canvas>
+                    <div id="pieChartLegend" style="margin-top: 15px; text-align: center;"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>[ EFEKTIIVSUSE VÕRDLUS ]</h3>
+                    <div style="padding: 15px;">
+                        <div class="efficiency-bar-wrapper">
+                            <div class="efficiency-label">HETKEL KASUTUSEL</div>
+                            <div class="efficiency-bar-bg">
+                                <div class="efficiency-bar current-eff" id="currentEffBar">100%</div>
+                            </div>
+                        </div>
+                        <div class="efficiency-bar-wrapper" style="margin-top: 15px;">
+                            <div class="efficiency-label">UUS TÖÖRIIST</div>
+                            <div class="efficiency-bar-bg">
+                                <div class="efficiency-bar new-eff" id="newEffBar">120%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="savings-indicator" id="savingsIndicator">
+                    <div class="savings-indicator-icon">●</div>
+                    <div class="savings-indicator-text">KOKKUHOID: 2 373 €</div>
+                    <div class="savings-indicator-subtext">OPTIMAALNE VALIK</div>
+                </div>
+
+                <div class="summary">
+                    <h3>[ KOKKUVÕTE ]</h3>
+                    <div class="summary-item">
+                        <span>CURRENT SYS - ANNUAL COST:</span>
+                        <span id="currentAnnualCost">0 €</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>NEW TOOL - ANNUAL COST:</span>
+                        <span id="newAnnualCost">0 €</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>SAVINGS RATIO:</span>
+                        <span id="financialGain">0%</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>TOTAL ANNUAL SAVINGS:</span>
+                        <span id="totalAnnualSavings" style="color: #00ff41;">0 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-wrapper">
+        <div class="footer-text">Venten ToolBoss v2.0</div>
+        <div class="footer-credit">© 2026 Venten OÜ | <a href="https://www.venten.ee" target="_blank" rel="noopener noreferrer">www.venten.ee</a></div>
+        <div class="footer-divider">
+            <div class="footer-developer">Developed by <a href="mailto:laurisoosaar@gmail.com">YRGEL</a></div>
+        </div>
+    </div>
+
+    <!-- Email Dialog Modal -->
+    <div id="emailModal" class="dialog-container">
+        <div class="dialog-content">
+            <h2 class="dialog-title">📧 SAADA RAPORT E-MAILILE</h2>
+
+            <div class="form-group">
+                <label class="form-label">Saaja e-mail:</label>
+                <input type="email" id="recipientEmail" placeholder="example@company.com" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sinu e-mail (koopia):</label>
+                <input type="email" id="senderEmail" placeholder="your@email.com (valikuline)" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Lisateade (valikuline):</label>
+                <textarea id="emailMessage" placeholder="Täiendav info..." class="form-textarea"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <button onclick="closeEmailDialog()" class="btn-base btn-close">TÜHISTA</button>
+                <button onclick="sendEmail()" class="btn-base btn-send">SAADA</button>
+            </div>
+
+            <div id="emailStatus" class="status-message"></div>
+        </div>
+    </div>
+
+    <!-- scripts: use CDN versions to ensure libraries are available -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // Translations loader: load per-language JSON files from /translations/*.json
+        const translations = {}; // will hold loaded language objects
+        window._currentLang = null;
+
+        async function loadTranslations(lang) {
+            try {
+                if (translations[lang]) return translations[lang];
+                const res = await fetch(`./translations/${lang}.json`);
+                if (!res.ok) throw new Error('No translation file');
+                const json = await res.json();
+                translations[lang] = json;
+                return json;
+            } catch (err) {
+                // fallback: small built-in fallback for essential keys
+                console.warn('Translation load failed for', lang, err);
+                if (lang === 'en') {
+                    translations.en = translations.en || {};
+                    return translations.en;
+                }
+                translations.et = translations.et || {};
+                return translations.et;
+            }
+        }
+
+        function getTranslation(key) {
+            const lang = window._currentLang || (localStorage.getItem('toolboss_lang') || 'et');
+            const t = translations[lang] || {};
+            return (t[key] !== undefined) ? t[key] : key;
+        }
+
+        async function applyTranslations(lang) {
+            window._currentLang = lang;
+            const t = await loadTranslations(lang);
+
+            // map static selectors
+            const mapText = [
+                { sel: 'h1', key: 'header.title' },
+                { sel: '.header p', key: 'header.subtitle' },
+                { sel: '.footer-text', key: 'footer.text' },
+                { sel: '.footer-credit', key: 'footer.credit', html: true },
+                { sel: '.footer-developer', key: 'footer.developer', html: true },
+                { sel: 'button.calculate-btn', key: 'btn.calculate' },
+                { sel: 'button.export-btn', key: 'btn.pdf' },
+                { sel: 'button.email-btn', key: 'btn.email' },
+                { sel: '#results h2', key: 'section.results' }
+            ];
+
+            mapText.forEach(item => {
+                const el = document.querySelector(item.sel);
+                if (!el) return;
+                if (item.html) el.innerHTML = (t[item.key] || el.innerHTML);
+                else el.textContent = (t[item.key] || el.textContent);
+            });
+
+            // Section headings by order
+            const h2s = document.querySelectorAll('.section > h2');
+            if (h2s && h2s.length >= 3) {
+                h2s[0].textContent = t['section.projectinfo'] || h2s[0].textContent;
+                h2s[1].textContent = t['section.machine'] || h2s[1].textContent;
+                h2s[2].textContent = t['section.comparison'] || h2s[2].textContent;
+            }
+
+            // Labels mapped by their 'for' attribute
+            const labelKeys = Object.keys(t).filter(k => k.startsWith('label.') || k.startsWith('modal.') || k.startsWith('report.') || k.startsWith('chart.'));
+            labelKeys.forEach(k => {
+                const id = k.replace('label.', '').replace('modal.', '').replace('report.', '').replace('chart.','');
+                const label = document.querySelector('label[for="' + id + '"]');
+                if (label) label.textContent = t[k];
+                if (k.startsWith('modal.') ) {
+                    // modal labels by position
+                    if (id === 'recipientEmail') document.querySelector('#emailModal .form-group:nth-child(1) .form-label').textContent = t[k];
+                    if (id === 'senderEmail') document.querySelector('#emailModal .form-group:nth-child(2) .form-label').textContent = t[k];
+                    if (id === 'emailMessage') document.querySelector('#emailModal .form-group:nth-child(3) .form-label').textContent = t[k];
+                }
+            });
+        }
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference or default to dark mode
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        // Listen for toggle changes
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Toggle manual time input
+        function toggleManualTime(tool) {
+            const checkbox = document.getElementById(tool + 'ManualTime');
+            const input = document.getElementById(tool + 'TimePerPart');
+
+            if (checkbox.checked) {
+                input.readOnly = false;
+                input.style.background = '#2a2a2a';
+                input.style.cursor = 'text';
+                input.style.color = '#00ff41';
+                // Enable calculator function
+                input.oninput = function() {
+                    try { this.value = Function('return ' + this.value)() }
+                    catch(e) {}
+                };
+            } else {
+                input.readOnly = true;
+                input.style.background = '#1a1a1a';
+                input.style.cursor = 'not-allowed';
+                input.oninput = null;
+                calculateTimeEstimate(tool);
+            }
+        }
+
+        // Calculate estimated time based on parameters
+        function calculateTimeEstimate(tool) {
+            // Skip if manual mode is enabled
+            const manualCheckbox = document.getElementById(tool + 'ManualTime');
+            if (manualCheckbox && manualCheckbox.checked) return;
+
+            try {
+                const cutLength = parseFloat(document.getElementById(tool + 'CutLength').value) || 0;
+                const feed = parseFloat(document.getElementById(tool + 'Feed').value) || 1;
+                const vc = parseFloat(document.getElementById(tool + 'VC').value) || 0;
+                const rpm = parseFloat(document.getElementById(tool + 'RPM').value) || 0;
+                const diameter = parseFloat(document.getElementById(tool + 'Diameter').value) || 0;
+
+                // Calculate theoretical RPM from VC and diameter
+                // VC = π × D × n / 1000, therefore n = (VC × 1000) / (π × D)
+                if (diameter > 0 && vc > 0) {
+                    const theoreticalRPM = (vc * 1000) / (Math.PI * diameter);
+
+                    // Check if user-entered RPM is significantly different from theoretical
+                    if (rpm > 0) {
+                        const difference = Math.abs((rpm - theoreticalRPM) / theoreticalRPM * 100);
+                        if (difference > 10) {
+                            console.warn(`${tool}: RPM (${rpm}) differs ${difference.toFixed(0)}% from theoretical (${theoreticalRPM.toFixed(0)}) based on VC and diameter`);
+                        }
+                    }
+                }
+
+                if (cutLength === 0 || feed === 0) {
+                    document.getElementById(tool + 'TimePerPart').value = '0';
+                    return;
+                }
+
+                // Calculate pure cutting time
+                const cuttingTime = (cutLength / feed) * 60; // seconds
+
+                // Add rapid positioning and approach time (typically 20-30% overhead)
+                const positioningOverhead = 1.25; // 25% overhead
+                const totalTime = cuttingTime * positioningOverhead;
+
+                // Add tool approach and retract (estimated 2-5 seconds)
+                const approachTime = 3; // seconds
+
+                const estimatedTime = totalTime + approachTime;
+
+                // Update the field
+                document.getElementById(tool + 'TimePerPart').value = Math.round(estimatedTime);
+
+                // Calculate tool life estimate
+                calculateToolLifeEstimate(tool);
+
+                // Show calculation breakdown in console for debugging
+                console.log(`${tool} time estimate:`, {
+                    cutLength: cutLength + 'mm',
+                    feed: feed + 'mm/min',
+                    diameter: diameter + 'mm',
+                    vc: vc + 'm/min',
+                    rpm: rpm,
+                    cuttingTime: cuttingTime.toFixed(1) + 's',
+                    withOverhead: totalTime.toFixed(1) + 's',
+                    total: estimatedTime.toFixed(1) + 's'
+                });
+
+            } catch (error) {
+                console.error('Error calculating time estimate:', error);
+            }
+        }
+
+        // Calculate tool life estimate based on Taylor's equation and cutting parameters
+        function calculateToolLifeEstimate(tool) {
+            try {
+                const vc = parseFloat(document.getElementById(tool + 'VC').value) || 0;
+                const ap = parseFloat(document.getElementById(tool + 'Ap').value) || 0;
+                const ae = parseFloat(document.getElementById(tool + 'Ae').value) || 0;
+                const feed = parseFloat(document.getElementById(tool + 'Feed').value) || 0;
+                const diameter = parseFloat(document.getElementById(tool + 'Diameter').value) || 0;
+                const coolant = document.getElementById('coolant').value;
+
+                if (vc === 0) {
+                    document.getElementById(tool + 'LifeEstimate').innerHTML =
+                        '<span style="color: #ff4444;">Sisesta lõikekiirus (VC)</span>';
+                    return;
+                }
+
+                // Base tool life at reference conditions (VC=100 m/min for carbide on steel)
+                // These are conservative estimates
+                const baseLife = 50; // meters at VC=100
+                const referenceVC = 100;
+
+                // Taylor's exponent (n) - varies by material combination
+                // Steel: n ≈ 0.25, Aluminum: n ≈ 0.3, Stainless: n ≈ 0.2
+                const taylorN = 0.25; // Conservative for steel
+
+                // Coolant factor - affects tool life significantly
+                const coolantFactors = {
+                    'emulsion': 1.0,        // Baseline - good cooling
+                    'oil': 1.15,            // Better lubrication, +15%
+                    'synthetic': 1.10,      // Good cooling, +10%
+                    'semi-synthetic': 1.05, // Balanced, +5%
+                    'dry': 0.70,            // No cooling, -30%
+                    'mql': 0.85,            // Minimal cooling, -15%
+                    'air': 0.75             // Air only, -25%
+                };
+                const coolantFactor = coolantFactors[coolant] || 1.0;
+
+                // Calculate estimated life using modified Taylor equation
+                // T = C / (VC^n)
+                const vcRatio = vc / referenceVC;
+                const lifeFactor = Math.pow(vcRatio, -1/taylorN);
+
+                // MRR (Material Removal Rate) adjustment
+                const mrr = ap * ae * feed; // mm³/min
+                const referenceMRR = 1000; // reference MRR
+                const mrrFactor = Math.max(0.5, Math.min(1.5, referenceMRR / (mrr || 1)));
+
+                // Diameter factor - smaller tools wear faster
+                let diameterFactor = 1.0;
+                if (diameter > 0) {
+                    const referenceDiameter = 12; // mm
+                    diameterFactor = Math.pow(diameter / referenceDiameter, 0.15); // Small effect
+                    diameterFactor = Math.max(0.8, Math.min(1.2, diameterFactor)); // Clamp
+                }
+
+                // Final estimated life with coolant and diameter factors
+                let estimatedLife = baseLife * lifeFactor * mrrFactor * coolantFactor * diameterFactor;
+
+                // Clamp to reasonable range
+                estimatedLife = Math.max(5, Math.min(200, estimatedLife));
+
+                // Display the estimate with explanation
+                const displayDiv = document.getElementById(tool + 'LifeEstimate');
+                const comparison = parseFloat(document.getElementById(tool + 'ToolLife').value) || 0;
+
+                let statusColor = '#00ff41';
+                let statusText = 'OPTIMAALNE';
+
+                if (comparison > 0) {
+                    const ratio = comparison / estimatedLife;
+                    if (ratio > 1.3) {
+                        statusColor = '#ffaa00';
+                        statusText = 'OPTIMISTLIK (+' + ((ratio - 1) * 100).toFixed(0) + '%)';
+                    } else if (ratio < 0.7) {
+                        statusColor = '#00ff41';
+                        statusText = 'KONSERVATIIVNE (-' + ((1 - ratio) * 100).toFixed(0) + '%)';
+                    }
+                }
+
+                // Coolant description for display
+                const coolantNames = {
+                    'emulsion': 'Emuls',
+                    'oil': 'Õli',
+                    'synthetic': 'Sünt',
+                    'semi-synthetic': 'Semi',
+                    'dry': 'Kuiv',
+                    'mql': 'MQL',
+                    'air': 'Õhk'
+                };
+
+                displayDiv.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${estimatedLife.toFixed(1)} m</span>
+            <span style="color: ${statusColor}; font-size: 0.75em;">${statusText}</span>
+          </div>
+          <div style="font-size: 0.65em; color: #666; margin-top: 3px;">
+            D${diameter}mm, VC${vc}, MRR${mrr.toFixed(0)}, ${coolantNames[coolant]}×${coolantFactor.toFixed(2)}
+          </div>
+        `;
+
+            } catch (error) {
+                console.error('Error calculating tool life estimate:', error);
+            }
+        }
+
+        function calculateEfficiency() {
+            try {
+                // Get all input values with validation
+                const yearlyQuantity = parseFloat(document.getElementById('yearlyQuantity').value) || 0;
+                const machineRate = parseFloat(document.getElementById('machineRate').value) || 0;
+                const toolChangeTime = parseFloat(document.getElementById('toolChangeTime').value) || 0;
+                const workHours = parseFloat(document.getElementById('workHours').value) || 0;
+
+                // Current tool
+                const currentToolPrice = parseFloat(document.getElementById('currentToolPrice').value) || 0;
+                const currentToolLife = parseFloat(document.getElementById('currentToolLife').value) || 0;
+                const currentCutLength = parseFloat(document.getElementById('currentCutLength').value) || 0;
+                const currentTimePerPart = parseFloat(document.getElementById('currentTimePerPart').value) || 0;
+                const currentToolName = document.getElementById('currentToolName').value || 'Hetkel kasutusel';
+
+                // New tool
+                const newToolPrice = parseFloat(document.getElementById('newToolPrice').value) || 0;
+                const newToolLife = parseFloat(document.getElementById('newToolLife').value) || 0;
+                const newCutLength = parseFloat(document.getElementById('newCutLength').value) || 0;
+                const newTimePerPart = parseFloat(document.getElementById('newTimePerPart').value) || 0;
+                const newToolName = document.getElementById('newToolName').value || 'Uus tööriist';
+
+                // Calculate pieces per tool
+                const currentPiecesPerTool = currentCutLength > 0 ? Math.floor(currentToolLife * 1000 / currentCutLength) : 0;
+                const newPiecesPerTool = newCutLength > 0 ? Math.floor(newToolLife * 1000 / newCutLength) : 0;
+
+                // Calculate tool quantities needed per year
+                const currentToolQuantityNeeded = currentPiecesPerTool > 0 ? Math.ceil(yearlyQuantity / currentPiecesPerTool) : 0;
+                const newToolQuantityNeeded = newPiecesPerTool > 0 ? Math.ceil(yearlyQuantity / newPiecesPerTool) : 0;
+
+                // Update tool quantity displays
+                document.getElementById('currentToolQuantity').textContent = currentToolQuantityNeeded + ' tk';
+                document.getElementById('newToolQuantity').textContent = newToolQuantityNeeded + ' tk';
+                document.getElementById('toolQuantityDiff').textContent = (currentToolQuantityNeeded - newToolQuantityNeeded) + ' tk';
+
+                // Calculate tool costs per year
+                const currentToolCostPerYear = currentToolPrice * currentToolQuantityNeeded;
+                const newToolCostPerYear = newToolPrice * newToolQuantityNeeded;
+                const toolCostDifference = currentToolCostPerYear - newToolCostPerYear;
+
+                // Calculate tool change costs
+                const currentToolChangesPerYear = currentPiecesPerTool > 0 ? yearlyQuantity / currentPiecesPerTool : 0;
+                const newToolChangesPerYear = newPiecesPerTool > 0 ? yearlyQuantity / newPiecesPerTool : 0;
+
+                const currentToolChangeHours = (toolChangeTime / 3600) * currentToolChangesPerYear;
+                const newToolChangeHours = (toolChangeTime / 3600) * newToolChangesPerYear;
+
+                const currentToolChangeCost = currentToolChangeHours * machineRate;
+                const newToolChangeCost = newToolChangeHours * machineRate;
+                const toolChangeSavings = currentToolChangeCost - newToolChangeCost;
+
+                // Update tool change cost displays
+                document.getElementById('toolChangeCurrent').textContent = currentToolChangeCost.toFixed(0) + ' €';
+                document.getElementById('toolChangeNew').textContent = newToolChangeCost.toFixed(0) + ' €';
+                document.getElementById('toolChangeSavings').textContent = toolChangeSavings.toFixed(0) + ' €';
+
+                // Calculate time savings
+                const currentTimePerYear = (currentTimePerPart * yearlyQuantity) / 3600; // hours
+                const newTimePerYear = (newTimePerPart * yearlyQuantity) / 3600; // hours
+                const timeSavingsHours = currentTimePerYear - newTimePerYear;
+
+                // Calculate machine cost savings
+                const machineCostSavings = timeSavingsHours * machineRate;
+
+                // Calculate total annual savings
+                const totalAnnualSavings = toolCostDifference + machineCostSavings + toolChangeSavings;
+
+                // Calculate time efficiency increase
+                const timeEfficiencyIncrease = currentTimePerYear > 0
+                    ? ((currentTimePerYear - newTimePerYear) / currentTimePerYear * 100).toFixed(1)
+                    : 0;
+
+                // Calculate total costs including work hours and tool changes
+                const currentTotalCost = currentToolCostPerYear + (currentTimePerYear * machineRate) + currentToolChangeCost;
+                const newTotalCost = newToolCostPerYear + (newTimePerYear * machineRate) + newToolChangeCost;
+
+                // Financial gain percentage
+                const financialGain = currentTotalCost > 0
+                    ? ((currentTotalCost - newTotalCost) / currentTotalCost * 100).toFixed(0)
+                    : 0;
+
+                // Update metrics with safe formatting
+                document.getElementById('timeSavings').textContent = (isNaN(timeSavingsHours) ? 0 : timeSavingsHours).toFixed(1);
+                document.getElementById('timeEfficiency').textContent = (isNaN(timeEfficiencyIncrease) ? 0 : timeEfficiencyIncrease) + '%';
+                document.getElementById('toolCostSavings').textContent = (isNaN(toolCostDifference) ? 0 : toolCostDifference).toFixed(0) + ' €';
+                document.getElementById('totalSavings').textContent = (isNaN(totalAnnualSavings) ? 0 : totalAnnualSavings).toFixed(0) + ' €';
+
+                // Update pieces per tool difference with safe formatting
+                const piecesDiff = newPiecesPerTool - currentPiecesPerTool;
+                document.getElementById('piecesPerToolDiff').textContent = (piecesDiff >= 0 ? '+' : '') + (isNaN(piecesDiff) ? 0 : piecesDiff);
+
+                // Update parameters comparison table
+                updateParametersTable();
+
+                // Update summary
+                document.getElementById('currentAnnualCost').textContent = currentTotalCost.toFixed(0) + ' €';
+                document.getElementById('newAnnualCost').textContent = newTotalCost.toFixed(0) + ' €';
+                document.getElementById('financialGain').textContent = financialGain + '%';
+                document.getElementById('totalAnnualSavings').textContent = totalAnnualSavings.toFixed(0) + ' €';
+
+                // Color code the metrics
+                colorCodeMetric('timeSavingsCard', timeSavingsHours);
+                colorCodeMetric('timeEfficiencyCard', parseFloat(timeEfficiencyIncrease));
+                colorCodeMetric('toolCostSavingsCard', toolCostDifference);
+                colorCodeMetric('piecesPerToolCard', piecesDiff);
+                colorCodeMetric('toolQuantityCard', currentToolQuantityNeeded - newToolQuantityNeeded);
+                colorCodeMetric('toolChangeSavingsCard', toolChangeSavings);
+
+                // Create cost comparison list
+                createComparisonList('costComparison', [
+                    { label: 'HETKEL KASUTUSEL', value: currentTotalCost, class: 'current' },
+                    { label: 'UUS TÖÖRIIST', value: newTotalCost, class: 'new' }
+                ], '€');
+
+                // Create life comparison list
+                createComparisonList('lifeComparison', [
+                    { label: 'HETKEL KASUTUSEL', value: currentToolLife, class: 'current' },
+                    { label: 'UUS TÖÖRIIST', value: newToolLife, class: 'new' }
+                ], 'm');
+
+                // Create pieces per tool comparison list
+                createComparisonList('piecesComparison', [
+                    { label: 'HETKEL KASUTUSEL', value: currentPiecesPerTool, class: 'current' },
+                    { label: 'UUS TÖÖRIIST', value: newPiecesPerTool, class: 'new' }
+                ], 'tk');
+
+                // Create pie chart for savings breakdown
+                createPieChart(toolCostDifference + toolChangeSavings, machineCostSavings);
+
+                // Update efficiency bars
+                updateEfficiencyBars(currentTimePerYear, newTimePerYear);
+
+                // Update savings indicator
+                updateSavingsIndicator(totalAnnualSavings);
+
+                // Show results
+                document.getElementById('results').classList.add('show');
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } catch (error) {
+                console.error('Calculation error:', error);
+                alert('Viga arvutamisel. Palun kontrollige sisestatud väärtusi.');
+            }
+        }
+
+        function colorCodeMetric(cardId, value) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            card.classList.remove('positive', 'negative');
+            if (value > 0) {
+                card.classList.add('positive');
+            } else if (value < 0) {
+                card.classList.add('negative');
+            }
+        }
+
+        function createComparisonList(containerId, data, unit) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            data.forEach(item => {
+                const compItem = document.createElement('div');
+                compItem.className = `comparison-item ${item.class || ''}`;
+
+                const value = document.createElement('div');
+                value.className = 'comparison-value';
+                const numValue = isNaN(item.value) ? 0 : item.value;
+                value.textContent = numValue.toFixed(numValue >= 100 ? 0 : 1) + ' ' + unit;
+
+                const label = document.createElement('div');
+                label.className = 'comparison-label';
+                label.textContent = item.label;
+
+                compItem.appendChild(value);
+                compItem.appendChild(label);
+                container.appendChild(compItem);
+            });
+        }
+
+        function createPieChart(toolSavings, timeSavings) {
+            const canvas = document.getElementById('savingsPieChart');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 120;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const total = Math.abs(toolSavings) + Math.abs(timeSavings);
+
+            if (total === 0) {
+                ctx.fillStyle = '#e0e0e0';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle = '#666';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(getTranslation('chart.noData') || 'No data', centerX, centerY);
+                return;
+            }
+
+            const toolPercentage = (Math.abs(toolSavings) / total) * 100;
+            const timePercentage = (Math.abs(timeSavings) / total) * 100;
+
+            let currentAngle = -Math.PI / 2;
+
+            // Draw tool savings slice
+            const toolAngle = (Math.abs(toolSavings) / total) * 2 * Math.PI;
+            ctx.fillStyle = '#00ff41';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + toolAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw time savings slice
+            currentAngle += toolAngle;
+            const timeAngle = (Math.abs(timeSavings) / total) * 2 * Math.PI;
+            ctx.fillStyle = '#0088ff';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + timeAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Add center circle for donut effect
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Add total in center
+            ctx.fillStyle = '#00ff41';
+            ctx.font = 'bold 20px Consolas';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText((toolSavings + timeSavings).toFixed(0) + '€', centerX, centerY - 8);
+            ctx.font = '12px Consolas';
+            ctx.fillStyle = '#888';
+            ctx.fillText(getTranslation('chart.totalLabel') || 'TOTAL', centerX, centerY + 12);
+
+            // Update legend using translations
+            const legend = document.getElementById('pieChartLegend');
+            const toolLabel = getTranslation('chart.toolSlice') || 'Tool cost+change';
+            const timeLabel = getTranslation('chart.timeSlice') || 'Machine time';
+            legend.innerHTML = `
+        <div class="pie-legend-item">
+          <div class="pie-legend-color" style="background: #00ff41;"></div>
+          <span>${toolLabel} (${toolPercentage.toFixed(0)}%)</span>
+        </div>
+        <div class="pie-legend-item">
+          <div class="pie-legend-color" style="background: #0088ff;"></div>
+          <span>${timeLabel} (${timePercentage.toFixed(0)}%)</span>
+        </div>
+      `;
+        }
+
+        // Build a clean printable report element using current data
+        function buildPrintableReport() {
+            const wrapper = document.createElement('div');
+            wrapper.id = 'printableReport';
+            wrapper.style.boxSizing = 'border-box';
+            wrapper.style.fontFamily = 'Arial, Helvetica, sans-serif';
+            wrapper.style.color = '#111';
+            wrapper.style.background = '#fff';
+            // adapt width for mobile screens
+            const isMobile = (window.innerWidth && window.innerWidth < 700);
+            wrapper.style.width = isMobile ? '120mm' : '210mm';
+            wrapper.style.maxWidth = isMobile ? '100%' : '210mm';
+            wrapper.style.padding = isMobile ? '10mm' : '20mm';
+
+            const header = document.createElement('div');
+            header.style.display = 'flex';
+            header.style.justifyContent = 'space-between';
+            header.style.alignItems = 'center';
+            header.style.marginBottom = '12px';
+
+            const left = document.createElement('div');
+            left.innerHTML = `<h2 style="margin:0">${getTranslation('header.title') || (document.querySelector('h1') ? document.querySelector('h1').textContent : 'Venten Report')}</h2>
+                              <div style="font-size:0.85em;color:#444">${getTranslation('header.subtitle') || (document.querySelector('.header p') ? document.querySelector('.header p').textContent : '')}</div>`;
+
+            const right = document.createElement('div');
+            const client = document.getElementById('client').value || '-';
+            const date = document.getElementById('testDate').value || new Date().toISOString().split('T')[0];
+            right.innerHTML = `<div style="text-align:right; font-size:0.9em; color:#333">${getTranslation('report.clientLabel') || 'Client'}: <strong>${client}</strong></div><div style="text-align:right; font-size:0.9em; color:#333">${getTranslation('report.dateLabel') || 'Date'}: <strong>${date}</strong></div>`;
+
+            header.appendChild(left);
+            header.appendChild(right);
+
+            wrapper.appendChild(header);
+
+            // Summary cards
+            const summary = document.createElement('div');
+            summary.style.display = 'flex';
+            summary.style.gap = '10px';
+            summary.style.flexWrap = 'wrap';
+            summary.style.marginBottom = '12px';
+
+            const summaryItems = [
+                { label: getTranslation('report.totalSavings') || 'TOTAL SAVINGS', value: document.getElementById('totalSavings').textContent || '0 €' },
+                { label: getTranslation('report.timeSavings') || 'TIME SAVINGS (H)', value: document.getElementById('timeSavings').textContent || '0' },
+                { label: getTranslation('report.toolCostDelta') || 'TOOL COST Δ', value: document.getElementById('toolCostSavings').textContent || '0 €' },
+                { label: getTranslation('report.efficiencyDelta') || 'EFFICIENCY Δ', value: document.getElementById('timeEfficiency').textContent || '0%' }
+            ];
+
+            summaryItems.forEach(it => {
+                const card = document.createElement('div');
+                card.style.flex = '1 1 180px';
+                card.style.background = '#f7f7f7';
+                card.style.padding = '8px';
+                card.style.border = '1px solid #e0e0e0';
+                card.innerHTML = `<div style="font-size:0.75em;color:#666">${it.label}</div><div style="font-size:1.2em;font-weight:700;color:#111">${it.value}</div>`;
+                summary.appendChild(card);
+            });
+
+            wrapper.appendChild(summary);
+
+            // Cost comparison table
+            const tableWrap = document.createElement('div');
+            tableWrap.style.marginTop = '10px';
+            tableWrap.innerHTML = `<h3 style="margin:8px 0 6px 0;">${getTranslation('report.summaryTitle') || 'Annual Cost Comparison'}</h3>`;
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.innerHTML = `<thead><tr><th style="text-align:left;border-bottom:1px solid #ddd;padding:6px">Category</th><th style="text-align:right;border-bottom:1px solid #ddd;padding:6px">Current</th><th style="text-align:right;border-bottom:1px solid #ddd;padding:6px">New</th></tr></thead>`;
+            const tbody = document.createElement('tbody');
+            const currentTotal = document.getElementById('currentAnnualCost').textContent || '0 €';
+            const newTotal = document.getElementById('newAnnualCost').textContent || '0 €';
+            const row = document.createElement('tr');
+            row.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f0f0f0">Total annual cost</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${currentTotal}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${newTotal}</td>`;
+            tbody.appendChild(row);
+            table.appendChild(tbody);
+            tableWrap.appendChild(table);
+            wrapper.appendChild(tableWrap);
+
+            // Parameters/details section
+            const detailsTitle = document.createElement('h3');
+            detailsTitle.style.margin = '12px 0 6px 0';
+            detailsTitle.textContent = getTranslation('report.detailsTitle') || 'Details';
+            wrapper.appendChild(detailsTitle);
+
+            const paramsTable = document.createElement('table');
+            paramsTable.style.width = '100%';
+            paramsTable.style.borderCollapse = 'collapse';
+            const paramsBody = document.createElement('tbody');
+            const params = [
+                ['Machine', document.getElementById('machine').value || '-'],
+                ['Application', document.getElementById('application').value || '-'],
+                ['Material', document.getElementById('material').value || '-'],
+                ['Coolant', document.getElementById('coolant').value || '-'],
+                ['Yearly qty', document.getElementById('yearlyQuantity').value || '-']
+            ];
+            params.forEach(p => {
+                const r = document.createElement('tr');
+                r.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f0f0f0;color:#666">${p[0]}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${p[1]}</td>`;
+                paramsBody.appendChild(r);
+            });
+            paramsTable.appendChild(paramsBody);
+            wrapper.appendChild(paramsTable);
+
+            // Tool comparison details
+            const toolsTitle = document.createElement('h3');
+            toolsTitle.style.margin = '12px 0 6px 0';
+            toolsTitle.textContent = getTranslation('report.toolsTitle') || 'Tool Comparison';
+            wrapper.appendChild(toolsTitle);
+
+            const toolsTable = document.createElement('table');
+            toolsTable.style.width = '100%';
+            toolsTable.style.borderCollapse = 'collapse';
+            const toolsTBody = document.createElement('tbody');
+            const currentName = document.getElementById('currentToolName').value || '-';
+            const newName = document.getElementById('newToolName').value || '-';
+            const toolRows = [
+                ['Name', currentName, newName],
+                ['Price (€)', document.getElementById('currentToolPrice').value || '-', document.getElementById('newToolPrice').value || '-'],
+                ['Life (m)', document.getElementById('currentToolLife').value || '-', document.getElementById('newToolLife').value || '-'],
+                ['Pieces/tool', document.getElementById('piecesPerToolDiff').textContent || '-', document.getElementById('piecesPerToolDiff').textContent || '-']
+            ];
+            toolRows.forEach(trr => {
+                const r = document.createElement('tr');
+                r.innerHTML = `<td style="padding:6px;border-bottom:1px solid #f0f0f0;color:#666">${trr[0]}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${trr[1]}</td><td style="padding:6px;border-bottom:1px solid #f0f0f0;text-align:right">${trr[2]}</td>`;
+                toolsTBody.appendChild(r);
+            });
+            toolsTable.appendChild(toolsTBody);
+            wrapper.appendChild(toolsTable);
+
+            // Footer note
+            const foot = document.createElement('div');
+            foot.style.marginTop = '18px';
+            foot.style.fontSize = '0.8em';
+            foot.style.color = '#666';
+            foot.innerHTML = `<div>${getTranslation('report.generatedBy') || 'Generated by Venten ToolBoss'}</div><div style="margin-top:6px;color:#999;font-size:0.75em">${getTranslation('report.note') || ''}</div>`;
+            wrapper.appendChild(foot);
+
+            return wrapper;
+        }
+
+        async function sendEmail() {
+            try {
+                const recipientEmail = document.getElementById('recipientEmail').value;
+                const senderEmail = document.getElementById('senderEmail').value;
+                const message = document.getElementById('emailMessage').value;
+                const statusDiv = document.getElementById('emailStatus');
+
+                if (!recipientEmail) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.textContent = '❌ Palun sisesta saaja e-mail aadress';
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(recipientEmail)) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.textContent = '❌ Vale e-maili aadress';
+                    return;
+                }
+
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-message';
+                statusDiv.textContent = '⏳ Generating PDF and preparing email...';
+
+                // Generate PDF and download it so user can attach (best-effort)
+                const pdfBlob = await generatePDFReport({ preview: false, download: true });
+
+                // Prepare mailto link with summary in body
+                const subject = encodeURIComponent('Venten Report');
+                const client = encodeURIComponent(document.getElementById('client').value || '');
+                const date = encodeURIComponent(document.getElementById('testDate').value || new Date().toISOString().split('T')[0]);
+                const bodyLines = [];
+                if (client) bodyLines.push('Client: ' + client);
+                bodyLines.push('Date: ' + (date || ''));
+                bodyLines.push('\nSummary:');
+                bodyLines.push((getTranslation('report.totalSavings') || 'Total savings') + ': ' + (document.getElementById('totalSavings').textContent || '0 €'));
+                bodyLines.push((getTranslation('report.timeSavings') || 'Time savings (h)') + ': ' + (document.getElementById('timeSavings').textContent || '0'));
+                bodyLines.push((getTranslation('report.toolCostDelta') || 'Tool cost Δ') + ': ' + (document.getElementById('toolCostSavings').textContent || '0 €'));
+                if (message) bodyLines.push('\nMessage:\n' + message);
+                bodyLines.push('\n\nNote: The PDF has been downloaded to your device. Please attach it to this e-mail before sending.');
+
+                const body = encodeURIComponent(bodyLines.join('\n'));
+
+                // Open mailto (this opens user's email client)
+                const mailto = `mailto:${encodeURIComponent(recipientEmail)}?subject=${subject}&body=${body}`;
+
+                // Open mail client
+                window.location.href = mailto;
+
+                // Update status
+                statusDiv.className = 'status-message status-success';
+                statusDiv.textContent = '✓ PDF generated and mail client opened. Attach the downloaded file and send.';
+
+                // Close dialog after short delay
+                setTimeout(() => {
+                    closeEmailDialog();
+                    document.getElementById('recipientEmail').value = '';
+                    document.getElementById('senderEmail').value = '';
+                    document.getElementById('emailMessage').value = '';
+                    statusDiv.style.display = 'none';
+                }, 2200);
+
+            } catch (error) {
+                console.error('Email sending error:', error);
+                const statusDiv = document.getElementById('emailStatus');
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-message status-error';
+                statusDiv.textContent = '❌ Viga e-maili saatmisel';
+            }
+        }
+    </script>
+</div>
+</body>
+</html>
