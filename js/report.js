@@ -7,7 +7,7 @@
   async function generatePDFReport(opts = { preview: true, download: false }) {
     const { preview, download } = opts;
 
-    // build printable DOM from page-level builder (expected to be defined in Toolboss.html)
+    // build printable DOM from page-level builder (expected to be defined in index.html)
     if (typeof buildPrintableReport !== 'function') {
       throw new Error('buildPrintableReport() not found on page');
     }
