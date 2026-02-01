@@ -2156,6 +2156,177 @@
                 statusDiv.textContent = '❌ Viga e-maili saatmisel';
             }
         }
+
+        // Drag and drop support for photo upload
+        const uploadSection = document.getElementById('uploadSection');
+        if (uploadSection) {
+            uploadSection.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            uploadSection.addEventListener('dragleave', function() {
+                this.classList.remove('dragover');
+            });
+
+            uploadSection.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    // Attempt to set the input.files using DataTransfer (supported in modern browsers)
+                    const input = document.getElementById('machinePhoto');
+                    try {
+                        const dt = new DataTransfer();
+                        for (let i = 0; i < files.length; i++) dt.items.add(files[i]);
+                        input.files = dt.files;
+                    } catch (err) {
+                        // Fallback: not all environments allow assigning input.files
+                        console.warn('Could not set input.files programmatically', err);
+                    }
+                    // Call handler with the FileList
+                    handlePhotoUpload({ target: { files: files } });
+                }
+            });
+        }
+
+        // Improved photo upload handler: accept event or direct FileList/Array
+        function handlePhotoUpload(eventOrFiles) {
+            try {
+                // Normalize files
+                let files = null;
+                if (!eventOrFiles) return;
+                if (eventOrFiles.target && eventOrFiles.target.files) files = eventOrFiles.target.files;
+                else if (eventOrFiles instanceof FileList) files = eventOrFiles;
+                else if (Array.isArray(eventOrFiles)) files = eventOrFiles;
+                else if (eventOrFiles.files) files = eventOrFiles.files;
+                if (!files || files.length === 0) return;
+
+                const file = files[0];
+                const uploadSection = document.getElementById('uploadSection');
+                const imageContainer = document.getElementById('imageContainer');
+
+                // Validate file size (max 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    alert('❌ Pilt on liiga suur. Maksimum 5MB.');
+                    // Clear input if present
+                    const input = document.getElementById('machinePhoto'); if (input) input.value = '';
+                    return;
+                }
+
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    alert('❌ Vale piltide vorming. Kasutage PNG, JPG või GIF.');
+                    const input = document.getElementById('machinePhoto'); if (input) input.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageContainer.innerHTML = '';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'uploaded-image';
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = '✕ Eemalda pilt';
+                    removeBtn.style.cssText = `
+                    display: block;
+                    width: 100%;
+                    margin-top: 8px;
+                    padding: 6px;
+                    background: var(--accent-red);
+                    color: #fff;
+                    border: 1px solid var(--accent-red);
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 0.75em;
+                    text-transform: uppercase;
+                    font-family: Consolas, monospace;
+                    transition: all 0.2s;
+                `;
+                    removeBtn.onmouseover = function() { this.style.background = '#ff6666'; };
+                    removeBtn.onmouseout = function() { this.style.background = 'var(--accent-red)'; };
+                    removeBtn.onclick = function() {
+                        imageContainer.innerHTML = '<div class="photo-placeholder">Ükski pilt pole üles laaditud</div>';
+                        const input = document.getElementById('machinePhoto'); if (input) input.value = '';
+                        uploadSection.style.borderColor = 'var(--border-color)';
+                    };
+
+                    imageContainer.appendChild(img);
+                    imageContainer.appendChild(removeBtn);
+                    uploadSection.style.borderColor = 'var(--accent-green)';
+                };
+                reader.readAsDataURL(file);
+            } catch (ex) {
+                console.error('handlePhotoUpload error', ex);
+            }
+        }
+
+        function updateParametersTable() {
+            // Clear existing table rows
+            const tbody = document.getElementById('paramsTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+            }
+
+            // Get current and new tool parameters
+            const currentParams = [
+                { label: 'D - Tööriista diameeter (mm)', current: document.getElementById('currentDiameter').value, new: document.getElementById('newDiameter').value },
+                { label: 'VC - joonkiirus (m/min)', current: document.getElementById('currentVC').value, new: document.getElementById('newVC').value },
+                { label: 'Ap - lõikesügavus (mm)', current: document.getElementById('currentAp').value, new: document.getElementById('newAp').value },
+                { label: 'S - RPM', current: document.getElementById('currentRPM').value, new: document.getElementById('newRPM').value },
+                { label: 'F - mm/min', current: document.getElementById('currentFeed').value, new: document.getElementById('newFeed').value },
+                { label: 'Ae - lõikelaius (mm)', current: document.getElementById('currentAe').value, new: document.getElementById('newAe').value }
+            ];
+
+            // Add rows to the table
+            currentParams.forEach(param => {
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid #404040';
+                row.innerHTML = `
+          <td style="padding: 8px; color: #e0e0e0; font-size: 0.85em;">${param.label}</td>
+          <td style="padding: 8px; text-align: center;">
+            <div style="position: relative;">
+              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;">Hetkel</div>
+              <input type="text" value="${param.current}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
+            </div>
+          </td>
+          <td style="padding: 8px; text-align: center;">
+            <div style="position: relative;">
+              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;">Uus</div>
+              <input type="text" value="${param.new}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
+            </div>
+          </td>
+        `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Language selector wiring and initialization
+        (function initTranslations() {
+            const langSelect = document.getElementById('langSelect');
+            const stored = localStorage.getItem('toolboss_lang') || 'et';
+            if (langSelect) {
+                // set the select value
+                langSelect.value = stored;
+                langSelect.addEventListener('change', async function() {
+                    const lang = this.value || 'et';
+                    localStorage.setItem('toolboss_lang', lang);
+                    try { await applyTranslations(lang); } catch(e) { console.warn(e); }
+                });
+            }
+
+            // Apply translations on load
+            document.addEventListener('DOMContentLoaded', async function() {
+                const lang = localStorage.getItem('toolboss_lang') || 'et';
+                try { await applyTranslations(lang); } catch(e) { console.warn('applyTranslations failed', e); }
+            });
+        })();
     </script>
 </div>
 </body>
