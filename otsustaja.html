@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lõikeinstrumentide Otsustaja 3000™</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Urbanist:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --secondary: #FFD100;
+            --dark: #1a1a1a;
+            --light: #f5f5f5;
+            --accent: #00D4FF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Urbanist', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background:
+                    radial-gradient(circle at 20% 50%, rgba(255, 107, 0, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 20%, rgba(255, 209, 0, 0.05) 0%, transparent 50%);
+            animation: ambient 20s ease-in-out infinite;
+        }
+
+        @keyframes ambient {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, -30px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: var(--light);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 40px rgba(255, 107, 0, 0.5);
+            letter-spacing: 3px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 40px rgba(255, 107, 0, 0.5), 0 0 20px rgba(255, 107, 0, 0.3); }
+            50% { text-shadow: 0 0 60px rgba(255, 107, 0, 0.8), 0 0 30px rgba(255, 107, 0, 0.5); }
+        }
+
+        .subtitle {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 0 auto 3rem;
+            max-width: 90vw;
+            max-height: 90vw;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow:
+                    0 0 0 15px var(--dark),
+                    0 0 0 18px var(--secondary),
+                    0 20px 50px rgba(0, 0, 0, 0.5),
+                    inset 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .wheel.spinning {
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .segment:hover {
+            filter: brightness(1.2);
+        }
+
+        .segment span {
+            transform: rotate(-67.5deg) translateX(-30px);
+            display: block;
+            max-width: 120px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .pointer {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid var(--secondary);
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+            z-index: 10;
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: var(--dark);
+            font-size: 2rem;
+        }
+
+        .spin-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 1.5rem 4rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--dark);
+            cursor: pointer;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spin-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .spin-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 0, 0.6);
+        }
+
+        .spin-btn:active {
+            transform: scale(0.98);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .result {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 0, 0.3);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.4;
+        }
+
+        .result-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 600px) {
+            .wheel-container {
+                width: 350px;
+                height: 350px;
+            }
+
+            .segment {
+                font-size: 0.7rem;
+            }
+
+            .spin-btn {
+                padding: 1rem 2.5rem;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Lõikeinstrumentide Otsustaja 3000™</h1>
+    <p class="subtitle">🎯 Teaduslik valikumeetod 🎯</p>
+
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel">
+            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(0deg);">
+                <span>Venten OÜ<br>🏆</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #FFD100, #FFE666); color: #1a1a1a; transform: rotate(45deg);">
+                <span>Kennametal<br>⚙️</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #00D4FF, #66E0FF); transform: rotate(90deg);">
+                <span>Teravus & Ko<br>😅</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(135deg);">
+                <span>Venten OÜ<br>✨</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #9D4EDD, #C77DFF); transform: rotate(180deg);">
+                <span>OSG<br>🔩</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(225deg);">
+                <span>Venten OÜ<br>💎</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #06FFA5, #59FFD9); color: #1a1a1a; transform: rotate(270deg);">
+                <span>Laast Vegas UAB<br>🎰</span>
+            </div>
+            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(315deg);">
+                <span>Venten OÜ<br>⭐</span>
+            </div>
+        </div>
+        <div class="center-circle">🎪</div>
+    </div>
+
+    <button class="spin-btn" id="spinBtn" onclick="spin()">
+        <span style="position: relative; z-index: 1;">Keera!</span>
+    </button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spinBtn');
+    const result = document.getElementById('result');
+
+    let currentRotation = 0;
+    let isSpinning = false;
+
+    const options = [
+        { name: "Venten OÜ", emoji: "🏆", message: "Õige valik! Venten OÜ – kvaliteet ja usaldusväärsus!" },
+        { name: "Kennametal", emoji: "⚙️", message: "Freesimiseks parim valik! Kennametal Venteni käest!" },
+        { name: "Teravus & Ko", emoji: "😅", message: "Huvitav valik, aga Venten oleks parem!" },
+        { name: "Venten OÜ", emoji: "✨", message: "Suurepärane! Venten OÜ on alati parim valik!" },
+        { name: "OSG", emoji: "🔩", message: "Keermestamiseks parim! OSG puurid ja keermestustarvikud Ventenilt!" },
+        { name: "Venten OÜ", emoji: "💎", message: "Briljantne! Venten OÜ ei peta kunagi!" },
+        { name: "Laast Vegas UAB", emoji: "🎰", message: "Hasart pole vaja – vali Venten!" },
+        { name: "Venten OÜ", emoji: "⭐", message: "Tähistaegu! Venten OÜ on number üks!" }
+    ];
+
+    function spin() {
+        if (isSpinning) return;
+
+        isSpinning = true;
+        spinBtn.disabled = true;
+        result.classList.remove('show');
+
+        // "Juhuslik" pööramine, mis alati jõuab Venteni peale
+        const ventenIndexes = [0, 3, 5, 7]; // Venten'i segmentide indeksid
+        const targetIndex = ventenIndexes[Math.floor(Math.random() * ventenIndexes.length)];
+
+        // Arvutame täpse nurga
+        const segmentAngle = 360 / 8;
+        const targetAngle = targetIndex * segmentAngle;
+
+        // Lisame 5-8 täispööret ja sihtpunkti
+        const spins = 5 + Math.floor(Math.random() * 4);
+        const totalRotation = (spins * 360) + (360 - targetAngle) + (segmentAngle / 2);
+
+        currentRotation += totalRotation;
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        // Pärast pöörlemist näitame tulemust
+        setTimeout(() => {
+            const selectedOption = options[targetIndex];
+            result.innerHTML = `
+                    <div>
+                        <span class="result-emoji">${selectedOption.emoji}</span>
+                        <div class="result-text">${selectedOption.message}</div>
+                    </div>
+                `;
+            result.classList.add('show');
+
+            isSpinning = false;
+            spinBtn.disabled = false;
+        }, 4000);
+    }
+
+    // Lisame klaviatuuri toetus
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'Enter') {
+            e.preventDefault();
+            spin();
+        }
+    });
+</script>
+</body>
+</html>
