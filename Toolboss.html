@@ -1486,6 +1486,75 @@
             }
         });
 
+        // --- TRANSLATIONS: provide local defaults and wire language selector ---
+        const builtInTranslations = {
+            et: {
+                'header.title': '⚙ VENTEN TOOLBOSS v2.0',
+                'header.subtitle': 'TÖÖRIISTADE VÕRDLUS | KULUDE ANALÜÜS | OPTIMISEERIMINE',
+                'footer.text': 'Venten ToolBoss v2.0',
+                'footer.credit': '© 2026 Venten OÜ | <a href="https://www.venten.ee" target="_blank">www.venten.ee</a>',
+                'footer.developer': 'Developed by <a href="mailto:laurisoosaar@gmail.com">YRGEL</a>',
+                'btn.calculate': '► ARVUTA EFEKTIIVSUS',
+                'btn.pdf': '📄 GENEREERI PDF',
+                'btn.email': '✉️ SAADA E-MAILILE',
+                'section.results': '[ ANALÜÜSI TULEMUSED ]',
+                'section.projectinfo': '[ PROJEKTI INFO ]',
+                'section.machine': '[ MASINA PARAM ]',
+                'section.comparison': '[ TÖÖRIISTADE VÕRDLUS ]',
+                'modal.recipientEmail': 'Saaja e-mail:',
+                'modal.senderEmail': 'Sinu e-mail (koopia):',
+                'modal.emailMessage': 'Lisateade (valikuline):',
+                'chart.noData': 'Andmed puuduvad',
+                'chart.totalLabel': 'KOKKU',
+                'chart.toolSlice': 'Tööriist',
+                'chart.timeSlice': 'Aeg'
+            },
+            en: {
+                'header.title': '⚙ VENTEN TOOLBOSS v2.0',
+                'header.subtitle': 'TOOL COMPARISON | COST ANALYSIS | OPTIMISATION',
+                'footer.text': 'Venten ToolBoss v2.0',
+                'footer.credit': '© 2026 Venten OÜ | <a href="https://www.venten.ee" target="_blank">www.venten.ee</a>',
+                'footer.developer': 'Developed by <a href="mailto:laurisoosaar@gmail.com">YRGEL</a>',
+                'btn.calculate': '► CALCULATE EFFICIENCY',
+                'btn.pdf': '📄 GENERATE PDF',
+                'btn.email': '✉️ SEND BY EMAIL',
+                'section.results': '[ ANALYSIS RESULTS ]',
+                'section.projectinfo': '[ PROJECT INFO ]',
+                'section.machine': '[ MACHINE PARAMS ]',
+                'section.comparison': '[ TOOL COMPARISON ]',
+                'modal.recipientEmail': 'Recipient email:',
+                'modal.senderEmail': 'Your email (cc):',
+                'modal.emailMessage': 'Additional message (optional):',
+                'chart.noData': 'No data',
+                'chart.totalLabel': 'TOTAL',
+                'chart.toolSlice': 'Tool',
+                'chart.timeSlice': 'Time'
+            }
+        };
+
+        // Ensure default translation objects exist so applyTranslations has something to merge
+        translations.et = Object.assign({}, builtInTranslations.et, translations.et || {});
+        translations.en = Object.assign({}, builtInTranslations.en, translations.en || {});
+
+        // Wire the language selector and apply language on load
+        (function() {
+            const langSelect = document.getElementById('langSelect');
+            const savedLang = localStorage.getItem('toolboss_lang') || 'et';
+            // Set the select value if element exists
+            if (langSelect) {
+                langSelect.value = savedLang;
+                langSelect.addEventListener('change', function(e) {
+                    const newLang = e.target.value || 'et';
+                    localStorage.setItem('toolboss_lang', newLang);
+                    applyTranslations(newLang).catch(err => console.warn('applyTranslations failed', err));
+                });
+            }
+
+            // Apply translations on initial load
+            // prefer savedLang, or default to 'et'
+            applyTranslations(savedLang).catch(err => console.warn('Initial applyTranslations failed', err));
+        })();
+
         // Toggle manual time input
         function toggleManualTime(tool) {
             const checkbox = document.getElementById(tool + 'ManualTime');
@@ -1777,7 +1846,7 @@
                 const piecesDiff = newPiecesPerTool - currentPiecesPerTool;
                 safeSetText('piecesPerToolDiff', (piecesDiff >= 0 ? '+' : '') + (isNaN(piecesDiff) ? 0 : piecesDiff));
 
-                // // // // Update parameter table and summary
+                // // // // // Update parameter table and summary
                 updateParametersTable();
                 safeSetText('currentAnnualCost', currentTotalCost.toFixed(0) + ' €');
                 safeSetText('newAnnualCost', newTotalCost.toFixed(0) + ' €');
@@ -1982,13 +2051,13 @@
           <td style="padding: 8px; color: #e0e0e0; font-size: 0.85em;">${param.label}</td>
           <td style="padding: 8px; text-align: center;">
             <div style="position: relative;">
-              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;">Hetkel</div>
+              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;"></div>
               <input type="text" value="${param.current}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
             </div>
           </td>
           <td style="padding: 8px; text-align: center;">
             <div style="position: relative;">
-              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;">Uus</div>
+              <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 0.7em; color: #888;"></div>
               <input type="text" value="${param.new}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
             </div>
           </td>
@@ -2176,86 +2245,211 @@
             }
         }
 
-        // Open generated PDF in a new tab for preview and also trigger download
+        // Create a structured, text-based PDF using jsPDF and canvas images for charts
+        async function generateStructuredPDF() {
+            try {
+                const jspdfLib = window.jspdf || window.jspdf;
+                const jsPDF = jspdfLib && jspdfLib.jsPDF ? jspdfLib.jsPDF : (window.jsPDF || null);
+                if (!jsPDF) throw new Error('jsPDF library is missing');
+
+                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+                const marginLeft = 15;
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const usableWidth = pageWidth - marginLeft * 2;
+                let y = 15;
+
+                // Header
+                pdf.setFontSize(14);
+                pdf.setTextColor('#00aa00');
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Venten ToolBoss - Raport', marginLeft, y);
+
+                const dateStr = (document.getElementById('testDate') && document.getElementById('testDate').value) || new Date().toISOString().slice(0, 10);
+                pdf.setFontSize(10);
+                pdf.setTextColor('#888888');
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(`Kuupäev: ${dateStr}`, pageWidth - marginLeft - 60, y);
+                y += 8;
+
+                // Project info
+                pdf.setFontSize(11);
+                pdf.setTextColor('#ffffff');
+                pdf.setFillColor(10, 10, 10);
+                pdf.rect(marginLeft - 2, y - 6, usableWidth + 4, 8, 'F');
+                pdf.setTextColor('#00ff41');
+                pdf.text('Projekti info', marginLeft, y);
+                y += 6;
+
+                pdf.setFontSize(10);
+                pdf.setTextColor('#e0e0e0');
+                const read = id => (document.getElementById(id) ? (document.getElementById(id).value || '') : '');
+                const pairs = [
+                    ['Klient', read('client')],
+                    ['Kliendi esindaja', read('clientRep')],
+                    ['Müügiesindaja', read('salesRep')],
+                    ['Masin', read('machine')],
+                    ['Aplikatsioon', read('application')],
+                    ['Materjal', read('material')],
+                    ['Lõikevedelik', read('coolant')]
+                ];
+
+                pairs.forEach(([k, v]) => {
+                    if (y > 270) { pdf.addPage(); y = 15; }
+                    pdf.setFont('helvetica', 'bold'); pdf.setTextColor('#888'); pdf.text(k + ':', marginLeft, y);
+                    pdf.setFont('helvetica', 'normal'); pdf.setTextColor('#e0e0e0'); pdf.text(String(v), marginLeft + 45, y);
+                    y += 6;
+                });
+                y += 4;
+
+                // Tool comparison summary table header
+                pdf.setFontSize(11);
+                pdf.setTextColor('#00ff41');
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Tööriistade kokkuvõte', marginLeft, y);
+                y += 6;
+
+                // Simple table: Parameter | Current | New
+                const tableCols = [60, 55, 55]; // widths
+                const tableStartX = marginLeft;
+                const colX = [tableStartX, tableStartX + tableCols[0], tableStartX + tableCols[0] + tableCols[1]];
+
+                pdf.setFontSize(9);
+                pdf.setTextColor('#888');
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Parameeter', colX[0], y);
+                pdf.text('Hetkel', colX[1], y);
+                pdf.text('Uus', colX[2], y);
+                y += 5;
+
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor('#e0e0e0');
+
+                const params = [
+                    ['D (mm)', read('currentDiameter') || '-', read('newDiameter') || '-'],
+                    ['VC (m/min)', read('currentVC') || '-', read('newVC') || '-'],
+                    ['Ap (mm)', read('currentAp') || '-', read('newAp') || '-'],
+                    ['RPM', read('currentRPM') || '-', read('newRPM') || '-'],
+                    ['F (mm/min)', read('currentFeed') || '-', read('newFeed') || '-'],
+                    ['Ae (mm)', read('currentAe') || '-', read('newAe') || '-']
+                ];
+
+                params.forEach(row => {
+                    if (y > 265) { pdf.addPage(); y = 20; }
+                    pdf.text(String(row[0]), colX[0], y);
+                    pdf.text(String(row[1]), colX[1], y);
+                    pdf.text(String(row[2]), colX[2], y);
+                    y += 6;
+                });
+
+                y += 6;
+
+                // Financial summary
+                pdf.setFontSize(11);
+                pdf.setTextColor('#00ff41');
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Finantsilised tulemused', marginLeft, y);
+                y += 6;
+                pdf.setFont('helvetica','normal');
+                pdf.setFontSize(10);
+                const format = v => (isNaN(v) ? String(v) : (Number(v).toFixed(0) + ' €'));
+                const safeNum = id => { const v = document.getElementById(id); return v ? parseFloat(v.value || 0) : 0; };
+                // Use computed values from the page (if present in text elements)
+                const totalSavingsEl = document.getElementById('totalSavings');
+                const totalSavingsTxt = totalSavingsEl ? totalSavingsEl.textContent : '';
+                pdf.setTextColor('#e0e0e0');
+                pdf.text('Aastane kokkuhoid: ' + (totalSavingsTxt || '0 €'), marginLeft, y);
+                y += 7;
+
+                // Insert pie chart image if available
+                try {
+                    const pieCanvas = document.getElementById('savingsPieChart');
+                    if (pieCanvas) {
+                        const imgData = pieCanvas.toDataURL('image/png');
+                        const imgW = 80; const imgH = 80;
+                        if (y + imgH > 285) { pdf.addPage(); y = 20; }
+                        pdf.addImage(imgData, 'PNG', pageWidth - marginLeft - imgW, y - 6, imgW, imgH);
+                    }
+                } catch (e) {
+                    console.warn('Pie chart embedding failed (possibly tainted canvas)', e);
+                }
+
+                y += 90;
+
+                // Add uploaded machine image if present
+                try {
+                    const imgEl = (document.querySelector('#imageContainer img')) || null;
+                    if (imgEl && imgEl.src) {
+                        // scale to fit
+                        const maxW = 80; const maxH = 80;
+                        // If y too low, add page
+                        if (y + maxH > 285) { pdf.addPage(); y = 20; }
+                        pdf.addImage(imgEl.src, 'PNG', pageWidth - marginLeft - maxW, y - 6, maxW, maxH);
+                        y += maxH + 6;
+                    }
+                } catch (e) {
+                    console.warn('Embedding uploaded image failed', e);
+                }
+
+                // Add summary rows at bottom
+                if (y > 250) { pdf.addPage(); y = 20; }
+                pdf.setFontSize(10);
+                pdf.setTextColor('#888');
+                pdf.text('Kokkuvõte saadud andmete põhjal', marginLeft, y);
+                y += 6;
+
+                const summaryItems = [
+                    ['Hetkel - Aastane kulu', (document.getElementById('currentAnnualCost') || {}).textContent || '0 €'],
+                    ['Uus tööriist - Aastane kulu', (document.getElementById('newAnnualCost') || {}).textContent || '0 €'],
+                    ['Sääst (%)', (document.getElementById('financialGain') || {}).textContent || '0%']
+                ];
+
+                summaryItems.forEach(([label, val]) => {
+                    if (y > 275) { pdf.addPage(); y = 20; }
+                    pdf.setTextColor('#888'); pdf.text(label + ':', marginLeft, y);
+                    pdf.setTextColor('#e0e0e0'); pdf.text(String(val), marginLeft + 80, y);
+                    y += 6;
+                });
+
+                // Finalize
+                const arrayBuf = pdf.output('arraybuffer');
+                return new Blob([arrayBuf], { type: 'application/pdf' });
+            } catch (err) {
+                console.error('generateStructuredPDF error', err);
+                throw err;
+            }
+        }
+
+        // Modify generatePDFReport to try structured PDF first and fall back to screenshot method
         async function generatePDFReport() {
             try {
                 const statusEl = document.getElementById('emailStatus');
-                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Genereerin PDF...'; }
+                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Genereerin PDF (struktureeritud)...'; }
+                try {
+                    const blob = await generateStructuredPDF();
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                    const a = document.createElement('a'); a.href = url; a.download = 'ToolBoss-report.pdf'; document.body.appendChild(a); a.click(); a.remove();
+                    if (statusEl) statusEl.textContent = 'Struktureeritud PDF loodud.';
+                    return;
+                } catch (structuredErr) {
+                    console.warn('Structured PDF failed, falling back to screenshot PDF', structuredErr);
+                    if (statusEl) statusEl.textContent = 'Struktureeritud PDF ebaõnnestus, teen ekraani-pildi PDFi...';
+                    // fall through to previous method
+                }
+
+                // fallback: screenshot-based PDF
                 const blob = await generatePDFBlob();
                 const url = URL.createObjectURL(blob);
-                // Open preview in a new tab
                 window.open(url, '_blank');
-                // Trigger download as well
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'ToolBoss-report.pdf';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                if (statusEl) { statusEl.textContent = 'PDF on loodud ja avaneb uues aknas.'; }
+                const a = document.createElement('a'); a.href = url; a.download = 'ToolBoss-report.pdf'; document.body.appendChild(a); a.click(); a.remove();
+                if (statusEl) { statusEl.textContent = 'PDF on loodud (ekraanipilt).'; }
             } catch (err) {
                 console.error('generatePDFReport error', err);
                 alert('PDF genereerimine ebaõnnestus: ' + (err && err.message ? err.message : String(err)));
             }
         }
 
-        function showEmailDialog() {
-            const modal = document.getElementById('emailModal');
-            if (!modal) return;
-            modal.style.display = 'flex';
-        }
-
-        function closeEmailDialog() {
-            const modal = document.getElementById('emailModal');
-            if (!modal) return;
-            modal.style.display = 'none';
-            const statusEl = document.getElementById('emailStatus'); if (statusEl) { statusEl.style.display = 'none'; statusEl.textContent = ''; }
-        }
-
-        async function sendEmail() {
-            const recipient = (document.getElementById('recipientEmail') || {}).value || '';
-            const sender = (document.getElementById('senderEmail') || {}).value || '';
-            const message = (document.getElementById('emailMessage') || {}).value || '';
-            const statusEl = document.getElementById('emailStatus');
-
-            if (!recipient) {
-                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Täida saaja e-mail.'; }
-                return;
-            }
-
-            try {
-                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Genereerin PDF ja valmistan e-kirja...'; }
-                const blob = await generatePDFBlob();
-                const filename = 'ToolBoss-report.pdf';
-                // Trigger download of the PDF (so user has it to attach) — mailto cannot auto-attach files
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-
-                const subject = encodeURIComponent('ToolBoss raport');
-                const bodyText = `Palun manustage ToolBoss raport (selle lehe PDF).\n\n${message ? 'Lisateade: ' + message + '\n\n' : ''}Sinu (koopia): ${sender || '---'}`;
-                const body = encodeURIComponent(bodyText + '\n\n(Palun ataachige PDF manuaalselt, see allalaaditi automaatselt)');
-
-                window.open('mailto:' + encodeURIComponent(recipient) + '?subject=' + subject + '&body=' + body, '_blank');
-
-                if (statusEl) { statusEl.textContent = 'PDF loodud. Uus e-kiri avatakse teie meiliprogrammis — manustage allalaaditud PDF ja saatke.'; }
-                closeEmailDialog();
-            } catch (err) {
-                console.error('sendEmail error', err);
-                if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'E-posti saatmine nurjus: ' + (err && err.message ? err.message : String(err)); }
-            }
-        }
-
-        // Expose PDF & email utilities to window (inline handlers expect globals)
         try { window.generatePDFReport = generatePDFReport; } catch (e) { window.generatePDFReport = function(){ console.error('generatePDFReport not available', e); }; }
-        try { window.showEmailDialog = showEmailDialog; } catch (e) { window.showEmailDialog = function(){ console.error('showEmailDialog not available', e); }; }
-        try { window.closeEmailDialog = closeEmailDialog; } catch (e) { window.closeEmailDialog = function(){ console.error('closeEmailDialog not available', e); }; }
-        try { window.sendEmail = sendEmail; } catch (e) { window.sendEmail = function(){ console.error('sendEmail not available', e); }; }
-
-        // ...existing code...
     </script>
 </div>
 </body>
