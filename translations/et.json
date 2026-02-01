@@ -3,7 +3,7 @@
   "header.subtitle": "TÖÖRIISTADE VÕRDLUS | KULUDE ANALÜÜS | OPTIMISEERIMINE",
   "footer.text": "Venten ToolBoss v2.0",
   "footer.credit": "© 2026 Venten OÜ | <a href=\"https://www.venten.ee\" target=\"_blank\">www.venten.ee</a>",
-  "footer.developer": "Developed by <a href=\"mailto:laurisoosaar@gmail.com\">yrgel</a>",
+  "footer.developer": "Developed by <a href=\"mailto:laurisoosaar@gmail.com\">YRGEL</a>",
   "btn.calculate": "► ARVUTA EFEKTIIVSUS",
   "btn.pdf": "📄 GENEREERI PDF",
   "btn.email": "✉️ SAADA E-MAILILE",
@@ -26,7 +26,34 @@
   "report.generatedBy": "Genereeritud Venten ToolBoss poolt",
   "report.note": "See raport on mõeldud sisemiseks kasutamiseks",
   "chart.noData": "Andmeid pole",
-  "chart.totalLabel": "KOGU",
+  "chart.totalLabel": "KOKKU",
   "chart.toolSlice": "Tööriista kulu",
-  "chart.timeSlice": "Masina aeg"
+  "chart.timeSlice": "Masina aeg",
+
+  "upload.label": "📤 Laadi üles",
+  "upload.info": "Max 5MB, PNG/JPG/GIF",
+  "upload.button": "Laadi pilt",
+  "photo.placeholder": "Ükski pilt pole üles laaditud",
+
+  "tool.currentHeading": "▼ HETKEL KASUTUSEL",
+  "tool.newHeading": "▲ UUS TÖÖRIIST (VENTEN)",
+
+  "metric.timeSavings.label": "AJAVÕIT (H)",
+  "metric.timeEfficiency.label": "EFEKT. KASV (%)",
+  "metric.toolQuantity.label": "TÖÖRIISTU KOKKUHOID",
+  "metric.piecesPerTool.label": "TÜKKI/TÖÖRIIST Δ",
+  "metric.toolChangeCurrent.label": "VAHETUSE KULU (HETKEL)",
+  "metric.toolChangeNew.label": "VAHETUSE KULU (UUS)",
+  "metric.toolChangeSavings.label": "VAHETUSE KOKKUHOID",
+  "metric.toolCostSavings.label": "TÖÖRIISTA KULU Δ",
+  "metric.totalSavings.label": "AASTANE KOKKUHOID KOKKU",
+
+  "summary.currentLabel": "CURRENT SYS - ANNUAL COST:",
+  "summary.newLabel": "NEW TOOL - ANNUAL COST:",
+  "summary.savingsRatioLabel": "SAVINGS RATIO:",
+  "summary.totalSavingsLabel": "TOTAL ANNUAL SAVINGS:",
+
+  "label.cutParams": "LÕIKEPARAMEETRID",
+  "label.recommendedLife": "SOOVITUSLIK ELUIGA:",
+  "label.timePerPartDesc": "Ajakulu/tk (sekundit) - arvutatakse automaatselt"
 }

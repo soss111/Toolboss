@@ -511,371 +511,60 @@
         }
 
         .pie-legend-item {
-            display: inline-flex;
-            align-items: center;
-            margin: 0 10px;
-            font-size: 0.75em;
-            color: var(--text-secondary);
-        }
-
-        .pie-legend-color {
-            width: 15px;
-            height: 15px;
-            margin-right: 6px;
-            border: 1px solid var(--border-color);
-        }
-
-        .savings-indicator {
-            text-align: center;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 1em;
-            border: 2px solid var(--border-color);
-        }
-
-        .savings-indicator.positive {
-            background: var(--bg-secondary);
-            border-color: var(--accent-green);
-        }
-
-        body.light-mode .savings-indicator.positive {
-            background: #e8f5e9;
-        }
-
-        .savings-indicator.negative {
-            background: var(--bg-secondary);
-            border-color: var(--accent-red);
-        }
-
-        body.light-mode .savings-indicator.negative {
-            background: #ffebee;
-        }
-
-        .savings-indicator-icon {
-            font-size: 2em;
-            margin-bottom: 5px;
-        }
-
-        .savings-indicator-text {
-            font-weight: 700;
-            font-size: 1.3em;
-            margin: 5px 0;
-            color: var(--accent-green);
-        }
-
-        .savings-indicator.negative .savings-indicator-text {
-            color: var(--accent-red);
-        }
-
-        .savings-indicator-subtext {
-            font-size: 0.75em;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        canvas {
-            background: var(--bg-tertiary);
-        }
-
-        .charts-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .tool-info-display {
-            margin-top: 15px;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border: 2px solid var(--accent-green);
-            text-align: center;
-        }
-
-        .current-tool .tool-info-display {
-            border-color: var(--accent-red);
-        }
-
-        .tool-info-label {
-            font-size: 0.7em;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .tool-info-value {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--accent-green);
-            font-family: 'Consolas', monospace;
-        }
-
-        .current-tool .tool-info-value {
-            color: var(--accent-red);
-        }
-
-        /* Dialog styles */
-        .dialog-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dialog-content {
-            background: var(--bg-secondary);
-            border: 2px solid var(--accent-green);
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
-        }
-
-        .dialog-title {
-            color: var(--accent-green);
-            margin-bottom: 20px;
-            text-align: center;
-            font-family: 'Consolas', monospace;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 0.85em;
-            text-transform: uppercase;
-            font-family: 'Consolas', monospace;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg);
-            color: var(--text-primary);
-            font-size: 1em;
-            font-family: 'Consolas', monospace;
-        }
-
-        .form-textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .btn-base {
-            padding: 12px;
-            background: var(--bg-primary);
-            color: var(--accent-green);
-            border: 2px solid var(--accent-green);
-            font-size: 0.9em;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-family: 'Consolas', monospace;
-            transition: all 0.2s;
-        }
-
-        .btn-base:hover {
-            background: var(--accent-green);
-            color: var(--bg-primary);
-        }
-
-        .btn-close {
-            background: var(--accent-red);
-            border-color: var(--accent-red);
-            color: #fff;
-        }
-
-        .btn-close:hover {
-            background: #ff6666;
-        }
-
-        .status-message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-family: 'Consolas', monospace;
-            font-size: 0.85em;
-            display: none;
-        }
-
-        .footer-wrapper {
-            background: var(--bg-primary);
-            border-top: 2px solid var(--border-color);
-            padding: 20px;
-            text-align: center;
-            margin-top: 20px;
-            font-family: 'Consolas', monospace;
-        }
-
-        .footer-text {
-            color: var(--text-secondary);
-            font-size: 0.85em;
-            margin-bottom: 5px;
-        }
-
-        .footer-credit {
-            color: var(--text-tertiary);
-            font-size: 0.75em;
-            margin-bottom: 8px;
-        }
-
-        .footer-divider {
-            border-top: 1px solid var(--border-color);
-            padding-top: 10px;
-            margin-top: 10px;
-        }
-
-        .footer-developer {
-            color: var(--text-secondary);
-            font-size: 0.75em;
-            margin-bottom: 3px;
-        }
-
-        .footer-email {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-size: 0.75em;
-            transition: color 0.2s;
-        }
-
-        .footer-email:hover {
-            color: var(--accent-green);
-        }
-
-        .upload-section {
-            margin-top: 15px;
-            padding: 12px;
-            background: var(--bg-primary);
-            border: 2px dashed var(--border-color);
-            border-radius: 6px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .upload-section:hover {
-            border-color: var(--accent-green);
-            background: var(--bg-secondary);
-        }
-
-        .upload-section.dragover {
-            border-color: var(--accent-green);
-            background: var(--bg-secondary);
-        }
-
-        .upload-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .upload-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: var(--accent-green);
-            color: var(--bg-primary);
-            border: 2px solid var(--accent-green);
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Consolas', monospace;
-            transition: all 0.2s;
-        }
-
-        .upload-btn:hover {
-            background: var(--bg-primary);
-            color: var(--accent-green);
-        }
-
-        .upload-info {
-            margin-top: 10px;
-            padding: 8px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.75em;
-            color: var(--text-secondary);
-        }
-
-        .uploaded-image {
-            margin-top: 10px;
-            max-width: 100%;
-            max-height: 200px;
-            border: 2px solid var(--border-color);
-            border-radius: 4px;
-        }
-
-        .footer-developer a {
-            color: var(--accent-green);
-            text-decoration: none;
-            cursor: pointer;
-            transition: color 0.2s;
-            font-weight: 700;
-        }
-
-        .footer-developer a:hover {
-            color: var(--accent-blue);
-        }
-
-        .uploaded-image-container {
-            margin-top: 15px;
-            padding: 10px;
-            background: var(--bg-tertiary);
-            border: 2px solid var(--border-color);
-            border-radius: 4px;
-            text-align: center;
-            min-height: 80px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-direction: column;
+            gap: 10px;
+            margin: 6px 0;
+            font-size: 0.9em;
+            color: var(--text-primary);
+            justify-content: space-between;
         }
 
-        .uploaded-image {
-            max-width: 100%;
-            max-height: 200px;
+        .pie-legend-item .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            flex: 0 0 auto;
         }
 
-        .photo-placeholder {
-            color: var(--text-secondary);
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .pie-legend-item .legend-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 auto;
         }
+
+        .pie-legend-item .legend-label {
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: none;
+        }
+
+        .pie-legend-item .legend-pct {
+            font-weight: 700;
+            color: var(--accent-green);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+        }
+
+        .pie-center-label {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            margin-top: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* ...existing styles... */
     </style>
 </head>
 <body>
@@ -1421,27 +1110,30 @@
             window._currentLang = lang;
             const t = await loadTranslations(lang);
 
-            // map static selectors
-            const mapText = [
-                { sel: 'h1', key: 'header.title' },
-                { sel: '.header p', key: 'header.subtitle' },
-                { sel: '.footer-text', key: 'footer.text' },
-                { sel: '.footer-credit', key: 'footer.credit', html: true },
-                { sel: '.footer-developer', key: 'footer.developer', html: true },
-                { sel: 'button.calculate-btn', key: 'btn.calculate' },
-                { sel: 'button.export-btn', key: 'btn.pdf' },
-                { sel: 'button.email-btn', key: 'btn.email' },
-                { sel: '#results h2', key: 'section.results' }
-            ];
+            // simple selector -> key map for common elements
+            const selectorMap = {
+                'h1': 'header.title',
+                '.header p': 'header.subtitle',
+                '.footer-text': 'footer.text',
+                '.footer-credit': 'footer.credit',
+                '.footer-developer': 'footer.developer',
+                'button.calculate-btn': 'btn.calculate',
+                'button.export-btn': 'btn.pdf',
+                'button.email-btn': 'btn.email',
+                '#results h2': 'section.results'
+            };
 
-            mapText.forEach(item => {
-                const el = document.querySelector(item.sel);
+            Object.keys(selectorMap).forEach(sel => {
+                const el = document.querySelector(sel);
                 if (!el) return;
-                if (item.html) el.innerHTML = (t[item.key] || el.innerHTML);
-                else el.textContent = (t[item.key] || el.textContent);
+                const key = selectorMap[sel];
+                if (key && t[key]) {
+                    if (sel === '.footer-credit' || sel === '.footer-developer') el.innerHTML = t[key];
+                    else el.textContent = t[key];
+                }
             });
 
-            // Section headings by order
+            // Section headings by order (keeps existing behavior)
             const h2s = document.querySelectorAll('.section > h2');
             if (h2s && h2s.length >= 3) {
                 h2s[0].textContent = t['section.projectinfo'] || h2s[0].textContent;
@@ -1449,17 +1141,118 @@
                 h2s[2].textContent = t['section.comparison'] || h2s[2].textContent;
             }
 
-            // Labels mapped by their 'for' attribute
-            const labelKeys = Object.keys(t).filter(k => k.startsWith('label.') || k.startsWith('modal.') || k.startsWith('report.') || k.startsWith('chart.'));
-            labelKeys.forEach(k => {
-                const id = k.replace('label.', '').replace('modal.', '').replace('report.', '').replace('chart.','');
+            // Chart titles (.chart-container h3) - map by appearance order in the results section
+            const chartH3Keys = ['chart.annualCost','chart.paramCompare','chart.lifeCompare','chart.piecesCompare','chart.savingsDistribution','chart.efficiencyCompare'];
+            const chartH3s = document.querySelectorAll('.chart-container h3');
+            chartH3s.forEach((el, idx) => {
+                const key = chartH3Keys[idx];
+                if (key && t[key]) el.textContent = t[key];
+            });
+
+            // Tool column headings
+            const currentToolH3 = document.querySelector('.tool-column.current-tool h3');
+            if (currentToolH3 && t['tool.currentHeading']) currentToolH3.textContent = t['tool.currentHeading'];
+            const newToolH3 = document.querySelector('.tool-column.new-tool h3');
+            if (newToolH3 && t['tool.newHeading']) newToolH3.textContent = t['tool.newHeading'];
+
+            // Metric labels by card id
+            const metricMap = {
+                'timeSavingsCard': 'metric.timeSavings.label',
+                'timeEfficiencyCard': 'metric.timeEfficiency.label',
+                'toolQuantityCard': 'metric.toolQuantity.label',
+                'piecesPerToolCard': 'metric.piecesPerTool.label',
+                'toolChangeCostCurrentCard': 'metric.toolChangeCurrent.label',
+                'toolChangeCostNewCard': 'metric.toolChangeNew.label',
+                'toolChangeSavingsCard': 'metric.toolChangeSavings.label',
+                'toolCostSavingsCard': 'metric.toolCostSavings.label',
+                'totalSavingsCard': 'metric.totalSavings.label'
+            };
+            Object.keys(metricMap).forEach(cardId => {
+                const key = metricMap[cardId];
+                const card = document.getElementById(cardId);
+                if (!card || !t[key]) return;
+                const labelEl = card.querySelector('.metric-label');
+                if (labelEl) labelEl.textContent = t[key];
+            });
+
+            // Summary labels (first span in each .summary-item)
+            const summaryKeys = ['summary.currentLabel','summary.newLabel','summary.savingsRatioLabel','summary.totalSavingsLabel'];
+            const summarySpans = document.querySelectorAll('.summary .summary-item');
+            summarySpans.forEach((item, idx) => {
+                const key = summaryKeys[idx];
+                if (!key || !t[key]) return;
+                const labelSpan = item.querySelector('span');
+                if (labelSpan) labelSpan.textContent = t[key];
+            });
+
+            // Input placeholders (map by element id)
+            const placeholderMap = {
+                'client': 'placeholder.client',
+                'clientRep': 'placeholder.clientRep',
+                'salesRep': 'placeholder.salesRep',
+                'machine': 'placeholder.machine',
+                'material': 'placeholder.material',
+                'batchSize': 'placeholder.batchSize',
+                'yearlyQuantity': 'placeholder.yearlyQuantity',
+                'currentToolName': 'placeholder.currentToolName',
+                'newToolName': 'placeholder.newToolName'
+            };
+            Object.keys(placeholderMap).forEach(id => {
+                const key = placeholderMap[id];
+                const el = document.getElementById(id);
+                if (el && t[key]) el.placeholder = t[key];
+            });
+
+            // Modal labels
+            if (t['modal.recipientEmail']) document.querySelector('#emailModal .form-group:nth-child(1) .form-label').textContent = t['modal.recipientEmail'];
+            if (t['modal.senderEmail']) document.querySelector('#emailModal .form-group:nth-child(2) .form-label').textContent = t['modal.senderEmail'];
+            if (t['modal.emailMessage']) document.querySelector('#emailModal .form-group:nth-child(3) .form-label').textContent = t['modal.emailMessage'];
+
+            // Upload section labels
+            if (t['upload.label']) {
+                const upLbl = document.querySelector('.upload-label'); if (upLbl) upLbl.textContent = t['upload.label'];
+            }
+            if (t['upload.info']) {
+                const upInfo = document.querySelector('.upload-info'); if (upInfo) upInfo.textContent = t['upload.info'];
+            }
+            if (t['photo.placeholder']) {
+                const ph = document.querySelector('.photo-placeholder'); if (ph) ph.textContent = t['photo.placeholder'];
+            }
+
+            // Chart legend keys (pie chart handled in createPieChart using getTranslation)
+
+            // Any additional label keys using 'label.{id}' format: find label[for="id"] and set text
+            Object.keys(t).filter(k => k.startsWith('label.')).forEach(k => {
+                const id = k.replace('label.', '');
                 const label = document.querySelector('label[for="' + id + '"]');
                 if (label) label.textContent = t[k];
-                if (k.startsWith('modal.') ) {
-                    // modal labels by position
-                    if (id === 'recipientEmail') document.querySelector('#emailModal .form-group:nth-child(1) .form-label').textContent = t[k];
-                    if (id === 'senderEmail') document.querySelector('#emailModal .form-group:nth-child(2) .form-label').textContent = t[k];
-                    if (id === 'emailMessage') document.querySelector('#emailModal .form-group:nth-child(3) .form-label').textContent = t[k];
+            });
+
+            // Also allow 'text.' prefixed keys to map to selectors directly
+            Object.keys(t).filter(k => k.startsWith('text.')).forEach(k => {
+                const sel = k.replace('text.', '');
+                const el = document.querySelector(sel);
+                if (el) el.textContent = t[k];
+            });
+
+            // Fallback direct phrase replacements for static nodes that don't have selectors
+            const fallbackTextMap = {
+                'LÕIKEPARAMEETRID': 'label.cutParams',
+                'SOOVITUSLIK ELUIGA:': 'label.recommendedLife',
+                'Ajakulu/tk (sekundit) - arvutatakse automaatselt': 'label.timePerPartDesc',
+                'Ükski pilt pole üles laaditud': 'photo.placeholder',
+                'Laadi pilt': 'upload.button',
+                'PNG, JPG, GIF (max 5MB) - Masina sildilt pilt': 'upload.info'
+            };
+
+            // Replace exact text-only nodes matching keys above
+            const all = document.querySelectorAll('body *');
+            all.forEach(el => {
+                if (el.childElementCount === 0) {
+                    const txt = (el.textContent || '').trim();
+                    if (fallbackTextMap[txt] && t[fallbackTextMap[txt]]) {
+                        el.textContent = t[fallbackTextMap[txt]];
+                    }
                 }
             });
         }
@@ -1507,7 +1300,30 @@
                 'chart.noData': 'Andmed puuduvad',
                 'chart.totalLabel': 'KOKKU',
                 'chart.toolSlice': 'Tööriist',
-                'chart.timeSlice': 'Aeg'
+                'chart.timeSlice': 'Aeg',
+                'upload.label': '📤 Laadi üles',
+                'upload.info': 'Max 5MB, PNG/JPG/GIF',
+                'photo.placeholder': 'Ükski pilt pole üles laaditud',
+                'tool.currentHeading': '▼ HETKEL KASUTUSEL',
+                'tool.newHeading': '▲ UUS TÖÖRIIST (VENTEN)',
+                'metric.timeSavings.label': 'AJAVÕIT (H)',
+                'metric.timeEfficiency.label': 'EFEKT. KASV (%)',
+                'metric.toolQuantity.label': 'TÖÖRIISTU KOKKUHOID',
+                'metric.piecesPerTool.label': 'TÜKKI/TÖÖRIIST Δ',
+                'metric.toolChangeCurrent.label': 'VAHETUSE KULU (HETKEL)',
+                'metric.toolChangeNew.label': 'VAHETUSE KULU (UUS)',
+                'metric.toolChangeSavings.label': 'VAHETUSE KOKKUHOID',
+                'metric.toolCostSavings.label': 'TÖÖRIISTA KULU Δ',
+                'metric.totalSavings.label': 'AASTANE KOKKUHOID KOKKU',
+                'summary.currentLabel': 'CURRENT SYS - ANNUAL COST:',
+                'summary.newLabel': 'NEW TOOL - ANNUAL COST:',
+                'summary.savingsRatioLabel': 'SAVINGS RATIO:',
+                'summary.totalSavingsLabel': 'TOTAL ANNUAL SAVINGS:',
+                'label.cutParams': 'LÕIKEPARAMEETRID',
+                'label.recommendedLife': 'SOOVITUSLIK ELUIGA:',
+                'label.timePerPartDesc': 'Ajakulu/tk (sekundit) - arvutatakse automaatselt',
+                'upload.button': 'Laadi pilt',
+                'upload.info': 'PNG, JPG, GIF (max 5MB) - Masina sildilt pilt'
             },
             en: {
                 'header.title': '⚙ VENTEN TOOLBOSS v2.0',
@@ -1528,7 +1344,30 @@
                 'chart.noData': 'No data',
                 'chart.totalLabel': 'TOTAL',
                 'chart.toolSlice': 'Tool',
-                'chart.timeSlice': 'Time'
+                'chart.timeSlice': 'Time',
+                'upload.label': '📤 Upload',
+                'upload.info': 'Max 5MB, PNG/JPG/GIF',
+                'photo.placeholder': 'No image uploaded',
+                'tool.currentHeading': '▼ CURRENTLY IN USE',
+                'tool.newHeading': '▲ NEW TOOL (VENTEN)',
+                'metric.timeSavings.label': 'TIME SAVINGS (H)',
+                'metric.timeEfficiency.label': 'EFFICIENCY GAIN (%)',
+                'metric.toolQuantity.label': 'TOOL QUANTITY SAVINGS',
+                'metric.piecesPerTool.label': 'PIECES PER TOOL Δ',
+                'metric.toolChangeCurrent.label': 'CHANGEOVER COST (CURRENT)',
+                'metric.toolChangeNew.label': 'CHANGEOVER COST (NEW)',
+                'metric.toolChangeSavings.label': 'CHANGEOVER SAVINGS',
+                'metric.toolCostSavings.label': 'TOOL COST Δ',
+                'metric.totalSavings.label': 'ANNUAL TOTAL SAVINGS',
+                'summary.currentLabel': 'CURRENT SYS - ANNUAL COST:',
+                'summary.newLabel': 'NEW TOOL - ANNUAL COST:',
+                'summary.savingsRatioLabel': 'SAVINGS RATIO:',
+                'summary.totalSavingsLabel': 'TOTAL ANNUAL SAVINGS:',
+                'label.cutParams': 'CUT PARAMETERS',
+                'label.recommendedLife': 'RECOMMENDED LIFE:',
+                'label.timePerPartDesc': 'Time per part (s) - auto-calculated',
+                'upload.button': 'Upload photo',
+                'upload.info': 'PNG, JPG, GIF (max 5MB) - Photo of machine label'
             }
         };
 
@@ -2107,7 +1946,18 @@
         // Draw a simple pie chart on canvas and update legend
         function createPieChart(toolSavings, timeSavings) {
             const canvas = document.getElementById('savingsPieChart');
-            if (!canvas || !canvas.getContext) return;
+            const legend = document.getElementById('pieChartLegend');
+            if (!legend) return;
+
+            // If no canvas available, still generate legend
+            if (!canvas || !canvas.getContext) {
+                const total = Math.abs(toolSavings) + Math.abs(timeSavings);
+                const toolPct = total ? Math.round((Math.abs(toolSavings) / total) * 100) : 0;
+                const timePct = total ? 100 - toolPct : 0;
+                legend.innerHTML = buildPieLegendHtml(toolPct, timePct);
+                return;
+            }
+
             const ctx = canvas.getContext('2d');
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
@@ -2118,12 +1968,12 @@
 
             const total = Math.abs(toolSavings) + Math.abs(timeSavings);
             if (total === 0) {
+                // draw empty circle
                 ctx.fillStyle = '#333';
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 ctx.fill();
-                const legend = document.getElementById('pieChartLegend');
-                if (legend) legend.textContent = getTranslation('chart.noData') || 'No data';
+                legend.innerHTML = `<div class="pie-legend-item"><div class="legend-info"><div class="dot" style="background:#666"></div><div class="legend-label">${getTranslation('chart.noData') || 'No data'}</div></div><div class="legend-pct">0%</div></div>`;
                 return;
             }
 
@@ -2145,56 +1995,44 @@
             ctx.closePath();
             ctx.fill();
 
-            // center circle
-            ctx.fillStyle = '#1a1a1a';
+            // inner circle for donut look
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-primary') || '#1a1a1a';
             ctx.beginPath();
             ctx.arc(centerX, centerY, radius * 0.6, 0, Math.PI * 2);
             ctx.fill();
 
-            // center text
+            // center large value (total savings)
             ctx.fillStyle = '#00ff41';
-            ctx.font = 'bold 16px Consolas, monospace';
+            ctx.font = 'bold 18px Consolas, monospace';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText((toolSavings + timeSavings).toFixed(0) + '€', centerX, centerY - 6);
+            const totalLabel = (Math.abs(toolSavings) + Math.abs(timeSavings)).toFixed(0) + '€';
+            ctx.fillText(totalLabel, centerX, centerY - 6);
             ctx.font = '12px Consolas, monospace';
             ctx.fillStyle = '#888';
-            ctx.fillText(getTranslation('chart.totalLabel') || 'TOTAL', centerX, centerY + 16);
+            ctx.fillText(getTranslation('chart.totalLabel') || 'TOTAL', centerX, centerY + 14);
 
-            // legend
-            const legend = document.getElementById('pieChartLegend');
-            if (legend) {
-                const toolPct = total ? Math.round((Math.abs(toolSavings) / total) * 100) : 0;
-                const timePct = total ? Math.round((Math.abs(timeSavings) / total) * 100) : 0;
-                legend.innerHTML = `
-          <div class="pie-legend-item"><div class="pie-legend-color" style="background:#00ff41"></div><span>${getTranslation('chart.toolSlice') || 'Tool'} (${toolPct}%)</span></div>
-          <div class="pie-legend-item"><div class="pie-legend-color" style="background:#0088ff"></div><span>${getTranslation('chart.timeSlice') || 'Time'} (${timePct}%)</span></div>
-        `;
-            }
+            // Legend HTML
+            const toolPct = total ? Math.round((Math.abs(toolSavings) / total) * 100) : 0;
+            const timePct = total ? 100 - toolPct : 0;
+            legend.innerHTML = buildPieLegendHtml(toolPct, timePct);
         }
 
-        function updateEfficiencyBars(currentHours, newHours) {
-            const curBar = document.getElementById('currentEffBar');
-            const newBar = document.getElementById('newEffBar');
-            if (!curBar || !newBar) return;
-            const cur = Number(currentHours) || 0;
-            const neu = Number(newHours) || 0;
-            const curPct = cur === 0 ? 100 : 100;
-            const newPct = cur === 0 ? 100 : Math.round((neu / cur) * 100);
-            curBar.style.width = curPct + '%';
-            newBar.style.width = newPct + '%';
-            curBar.textContent = curPct + '%';
-            newBar.textContent = newPct + '%';
-        }
-
-        function updateSavingsIndicator(amount) {
-            const el = document.getElementById('savingsIndicator');
-            if (!el) return;
-            const val = Number(amount) || 0;
-            const textEl = el.querySelector('.savings-indicator-text');
-            if (textEl) textEl.textContent = (val >= 0 ? 'KOKKUHOID: ' : 'KAHJUM: ') + val.toFixed(0) + ' €';
-            el.classList.remove('positive', 'negative');
-            if (val >= 0) el.classList.add('positive'); else el.classList.add('negative');
+        function buildPieLegendHtml(toolPct, timePct) {
+            const toolLabel = getTranslation('chart.toolSlice') || 'Tool';
+            const timeLabel = getTranslation('chart.timeSlice') || 'Time';
+            return `
+                <div class="pie-legend">
+                    <div class="pie-legend-item">
+                        <div class="legend-info"><div class="dot" style="background:#00ff41"></div><div class="legend-label">${toolLabel}</div></div>
+                        <div class="legend-pct">${toolPct}%</div>
+                    </div>
+                    <div class="pie-legend-item">
+                        <div class="legend-info"><div class="dot" style="background:#0088ff"></div><div class="legend-label">${timeLabel}</div></div>
+                        <div class="legend-pct">${timePct}%</div>
+                    </div>
+                </div>
+            `;
         }
 
         // Expose helpers to window as well
