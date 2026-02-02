@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="et">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -867,8 +867,9 @@
                 <input type="number" id="machineRate" value="90" min="0" step="1">
             </div>
             <div class="input-group">
-                <label for="toolChangeTime">Tool change time (seconds)</label>
+                <label for="toolChangeTime">Tool change time (seconds)🔢</label>
                 <input type="text" id="toolChangeTime" value="10" style="background: var(--input-bg); color: var(--text-primary);" oninput="evaluateMathExpression(this)">
+
             </div>
             <div class="input-group">
                 <label for="workHours">Working hours per year</label>
@@ -879,7 +880,7 @@
             <div class="upload-section" id="uploadSection">
                 <label class="upload-label">📸 Machine label (photo)</label>
                 <div class="file-input-wrapper">
-<!--                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">-->
+                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">
                     <button class="upload-btn" onclick="document.getElementById('machinePhoto').click();">
                         Upload image
                     </button>
@@ -974,7 +975,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Time/piece (seconds) <span style="color: #888; font-size: 0.85em;">- calculated automatically</span></label>
+                        <label>Time/piece (seconds) 🔢<span style="color: #888; font-size: 0.85em;">- calculated automatically</span></label>
                         <input id="currentTimePerPart" value="88" type="text" readonly
                                style="background: #1a1a1a; color: #00ff41; cursor: not-allowed;"
                                title="Will be calculated according cutting length and parameters">
@@ -1051,7 +1052,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Time/piece (seconds) <span style="color: #888; font-size: 0.85em;">- calculated automatically</span></label>
+                        <label>Time/piece (seconds) 🔢<span style="color: #888; font-size: 0.85em;">- calculated automatically</span></label>
                         <input id="newTimePerPart" value="357" type="text" readonly
                                style="background: #1a1a1a; color: #00ff41; cursor: not-allowed;"
                                title="Will be calculated according cutting length and parameters">
