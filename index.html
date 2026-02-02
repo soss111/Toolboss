@@ -118,6 +118,8 @@
             display: none;
         }
 
+
+
         .toggle-label {
             position: relative;
             display: inline-block;
@@ -483,6 +485,85 @@
             text-transform: uppercase;
         }
 
+        .tool-info-label {
+            font-size: 1.0em;
+            font-weight: 1000;
+            color: var(--accent-green);
+            font-family: 'Consolas', monospace;
+        }
+        .tool-info-display {
+            font-size: 1.0em;
+            font-weight: 1000;
+            color: var(--accent-green);
+            font-family: 'Consolas', monospace;
+        }
+        /*.tool-info-value {
+            font-size: 1.0em;
+            font-weight: 1000;
+            color: var(--accent-green);
+            font-family: 'Consolas', monospace;
+        }*/
+
+        canvas {
+            background: #0a0a0a;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-info-display {
+            margin-top: 15px;
+            padding: 12px;
+            background: #0a0a0a;
+            border: 2px solid #00ff41;
+            text-align: center;
+        }
+
+        .current-tool .tool-info-display {
+            border-color: #ff4444;
+        }
+
+        .tool-info-label {
+            font-size: 0.7em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .tool-info-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #00ff41;
+            font-family: 'Consolas', monospace;
+        }
+
+        .current-tool .tool-info-value {
+            color: #ff4444;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tool-info-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #00ff41;
+            font-family: 'Consolas', monospace;
+        }
+
+        .current-tool .tool-info-value {
+            color: #ff4444;
+        }
+
+
         .efficiency-bar-bg {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
@@ -568,6 +649,98 @@
             font-size: 0.9em;
         }
 
+        .upload-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .upload-label {
+            display: block;
+            color: var(--accent-green);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        .upload-btn {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            width: 100%;
+        }
+
+        .upload-btn:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .upload-info {
+            color: var(--text-tertiary);
+            font-size: 0.8em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #imageContainer,
+        .uploaded-image-container {
+            margin-top: 10px;
+            min-height: 150px;
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        #imageContainer img,
+        .uploaded-image-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        #imageContainer .placeholder,
+        .photo-placeholder {
+            color: var(--text-tertiary);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        #imageContainer .placeholder {
+            color: var(--accent-green);
+        }
+
+        #imageContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+
+        }
+        #imageContainer .placeholder {
+            color: var(--accent-green);
+            text-align: center;
+            padding: 20px;
+        }
+
+
         /* Modal styles: keep dialog hidden by default to avoid layout shifts */
         .dialog-container { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); z-index: 9999; }
         .dialog-container.show { display: flex; }
@@ -600,7 +773,7 @@
                  title="Venten OÜ">
             <div class="header-title">
                 <h1>⚙ VENTEN TOOLBOSS v2.0</h1>
-                <p>TÖÖRIISTADE VÕRDLUS | KULUDE ANALÜÜS | OPTIMISEERIMINE</p>
+                <p>TOOL COMPARISON | COST ANALYSIS | OPTIMIZATION</p>
             </div>
         </div>
         <div class="header-right">
@@ -628,143 +801,161 @@
     <div class="content">
         <!-- Project Information -->
         <div class="section">
-            <h2>[ PROJEKTI INFO ]</h2>
+            <h2>[ PROJECT INFORMATION ]</h2>
             <div class="input-group">
-                <label for="client">Klient</label>
-                <input type="text" id="client" placeholder="Näit: Laast Vegas Oü">
+                <label for="client">Customer</label>
+                <input type="text" id="client" placeholder="Example: Laast Vegas Oü">
             </div>
             <div class="input-group">
-                <label for="clientRep">Kliendi esindaja</label>
-                <input type="text" id="clientRep" placeholder="Näit: Tõnu Tolerantsimurdja">
+                <label for="clientRep">Customer representative</label>
+                <input type="text" id="clientRep" placeholder="Example: Tõnu Tolerantsimurdja">
             </div>
             <div class="input-group">
-                <label for="salesRep">Müügiesindaja</label>
-                <input type="text" id="salesRep" placeholder="Näit: Toomas Tammer">
+                <label for="salesRep">Sales representative</label>
+                <input type="text" id="salesRep" placeholder="Example: Toomas Tammer">
             </div>
 
 
             <div class="input-group">
-                <label for="testDate">Kuupäev</label>
+                <label for="testDate">Date</label>
                 <input type="date" id="testDate">
             </div>
             <div class="input-group">
-                <label for="machine">Masin</label>
-                <input type="text" id="machine" placeholder="Näit: Freespink">
+                <label for="machine">Machine</label>
+                <input type="text" id="machine" placeholder="Example: Lathe">
             </div>
             <div class="input-group">
-                <label for="application">Aplikatsioon</label>
+                <label for="application">Application</label>
                 <select id="application">
-                    <option value="Freesimine">Freesimine</option>
-                    <option value="Treepink">Treepink</option>
-                    <option value="Puurimine">Puurimine</option>
-                    <option value="Lihvimine">Lihvimine</option>
+                    <option value="Milling">Milling</option>
+                    <option value="Lathe">Lathe</option>
+                    <option value="Drilling">Drilling</option>
+                    <option value="Grinding">Grinding</option>
                 </select>
             </div>
             <div class="input-group">
-                <label for="material">Materjal</label>
-                <input type="text" id="material" placeholder="Näit: Alumiinium AW7075">
+                <label for="material">Material</label>
+                <input type="text" id="material" placeholder="Example: Aluminium AW7075">
             </div>
             <div class="input-group">
-                <label for="coolant">Lõikevedelik</label>
+                <label for="coolant">Cutting fluid</label>
                 <select id="coolant" onchange="calculateToolLifeEstimate('current'); calculateToolLifeEstimate('new');">
-                    <option value="emulsion">Emulsioon</option>
-                    <option value="oil">Õli</option>
-                    <option value="synthetic">Sünteetiline</option>
-                    <option value="semi-synthetic">Poolsünteetiline</option>
-                    <option value="dry">Kuiv (ilma)</option>
-                    <option value="mql">MQL (minimaalne)</option>
-                    <option value="air">Õhk</option>
+                    <option value="emulsion">Emulsion</option>
+                    <option value="oil">Oil</option>
+                    <option value="synthetic">Synthetic</option>
+                    <option value="semi-synthetic">Semi-synthetic</option>
+                    <option value="dry">Dry</option>
+                    <option value="mql">MQL</option>
+                    <option value="air">Air</option>
                 </select>
             </div>
             <div class="input-group">
-                <label for="batchSize">Detailide kogus (partii)</label>
+                <label for="batchSize">Quantity of parts (batch)</label>
                 <input type="number" id="batchSize" value="3" min="1">
             </div>
             <div class="input-group">
-                <label for="yearlyQuantity">Detailide kogus (aastas)</label>
+                <label for="yearlyQuantity">Quantity of parts (per year)</label>
                 <input type="number" id="yearlyQuantity" value="120" min="1">
             </div>
         </div>
 
         <!-- Machine Parameters -->
         <div class="section">
-            <h2>[ MASINA PARAM ]</h2>
+            <h2>[ MACHINE OPTIONS ]</h2>
             <div class="input-group">
-                <label for="machineRate">Masina hind (€/h)</label>
+                <label for="machineRate">MACHINE PRICE (€/h)</label>
                 <input type="number" id="machineRate" value="90" min="0" step="1">
             </div>
             <div class="input-group">
-                <label for="toolChangeTime">Tööriista vahetamise aeg (sekundit)</label>
+                <label for="toolChangeTime">Tool change time (seconds)</label>
                 <input type="text" id="toolChangeTime" value="10" style="background: var(--input-bg); color: var(--text-primary);" oninput="evaluateMathExpression(this)">
             </div>
             <div class="input-group">
-                <label for="workHours">Töötunnid aastas</label>
+                <label for="workHours">Working hours per year</label>
                 <input type="number" id="workHours" value="1500" min="1">
             </div>
 
             <!-- Machine Label Photo Upload -->
             <div class="upload-section" id="uploadSection">
-                <label class="upload-label">📸 Masina etikett (foto)</label>
+                <label class="upload-label">📸 Machine label (photo)</label>
                 <div class="file-input-wrapper">
                     <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">
                     <button class="upload-btn" onclick="document.getElementById('machinePhoto').click();">
-                        Laadi pilt
+                        Upload image
                     </button>
                 </div>
                 <div class="upload-info">
-                    PNG, JPG, GIF (max 5MB) - Masina sildilt pilt
+                    PNG, JPG, GIF (max 5MB) - Image from machine label
                 </div>
                 <div class="uploaded-image-container" id="imageContainer">
-                    <div class="photo-placeholder">Ükski pilt pole üles laaditud</div>
+                    <div class="photo-placeholder">No image uploaded!</div>
                 </div>
             </div>
         </div>
 
+            <!-- Machine Label Photo Upload -->
+        <!--  <div class="upload-section">
+                <label class="upload-label">📸 Machine Label Photo</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">
+                    <button type="button" class="upload-btn" onclick="document.getElementById('machinePhoto').click();">
+                        Upload Image
+                    </button>
+                </div>
+                <div class="upload-info">
+                    PNG, JPG, GIF (max 5MB) - Machine label picture
+                </div>
+                <div class="uploaded-image-container" id="imageContainer">
+                    <div class="photo-placeholder">No image uploaded</div>
+                </div>
+            </div>
+        </div>-->
+
         <!-- Tool Comparison -->
         <div class="section" style="grid-column: 1 / -1;">
-            <h2>[ TÖÖRIISTADE VÕRDLUS ]</h2>
+            <h2>[ TOOL COMPARISON ]</h2>
             <div class="tool-columns">
                 <!-- Current Tool -->
                 <div class="tool-column current-tool">
-                    <h3>▼ HETKEL KASUTUSEL</h3>
+                    <h3>▼ CURRENTLY IN USE</h3>
                     <div class="input-group">
-                        <label for="currentToolName">Tööriista nimi</label>
+                        <label for="currentToolName">Tool name</label>
                         <input type="text" id="currentToolName" placeholder="Näit: noName Hiinakas">
                     </div>
                     <div class="input-group">
-                        <label for="currentToolPrice">Tööriista hind (€)</label>
+                        <label for="currentToolPrice">Tool cost (€)</label>
                         <input type="number" id="currentToolPrice" value="10.90" min="0" step="0.01">
                     </div>
                     <div class="input-group">
-                        <label for="currentToolLife">Tööriista eluiga meetrites (m)</label>
+                        <label for="currentToolLife">Tool life (m)</label>
                         <input type="number" id="currentToolLife" value="16.43" min="0" step="0.01">
                         <div style="margin-top: 5px; padding: 8px; background: #0a0a0a; border: 1px solid #404040; border-radius: 4px;">
-                            <div style="font-size: 0.7em; color: #888; margin-bottom: 3px;">SOOVITUSLIK ELUIGA:</div>
+                            <div style="font-size: 0.7em; color: #888; margin-bottom: 3px;">RECOMMENDED LIFESPAN:</div>
                             <div id="currentLifeEstimate" style="font-size: 0.85em; color: #00ff41;">
-                                Arvutatakse parameetrite põhjal
+                                Will be calculated according parameters
                             </div>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label for="currentCutLength">Lõikepikkus detaili kohta (mm)</label>
+                        <label for="currentCutLength">CUTTING LENGTH PER PART (mm)</label>
                         <input type="number" id="currentCutLength" value="1000" min="0" step="1"
                                oninput="document.getElementById('newCutLength').value = this.value; calculateTimeEstimate('current'); calculateTimeEstimate('new');">
                     </div>
 
                     <div style="border-top: 1px solid #404040; margin: 15px 0; padding-top: 15px;">
-                        <div style="color: #888; font-size: 0.7em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">LÕIKEPARAMEETRID</div>
+                        <div style="color: #888; font-size: 0.7em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">CUTTING PARAMETERS</div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="currentDiameter">D - Tööriista diameeter (mm)</label>
+                                <label for="currentDiameter">D - Tool diameter (mm)</label>
                                 <input type="number" id="currentDiameter" value="16" min="0" step="0.1" oninput="calculateTimeEstimate('current')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="currentVC">VC - joonkiirus (m/min)</label>
+                                <label for="currentVC">VC - line speed (m/min)</label>
                                 <input type="number" id="currentVC" value="235" min="0" step="1" oninput="calculateTimeEstimate('current')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="currentAp">Ap - lõikesügavus (mm)</label>
+                                <label for="currentAp">Ap - cutting depth (mm)</label>
                                 <input type="number" id="currentAp" value="0.5" min="0" step="0.1" oninput="calculateTimeEstimate('current')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
@@ -776,72 +967,72 @@
                                 <input type="number" id="currentFeed" value="5000" min="0" step="1" oninput="calculateTimeEstimate('current')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="currentAe">Ae - lõikelaius (mm)</label>
+                                <label for="currentAe">Ae - cutting width (mm)</label>
                                 <input type="number" id="currentAe" value="1.0" min="0" step="0.1" oninput="calculateTimeEstimate('current')">
                             </div>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Ajakulu/tk (sekundit) <span style="color: #888; font-size: 0.85em;">- arvutatakse automaatselt</span></label>
+                        <label>Time/piece (seconds) <span style="color: #888; font-size: 0.85em;">- calculated automatically</span></label>
                         <input id="currentTimePerPart" value="88" type="text" readonly
                                style="background: #1a1a1a; color: #00ff41; cursor: not-allowed;"
-                               title="Arvutatakse lõikepikkuse ja parameetrite põhjal">
+                               title="Will be calculated according cutting length and parameters">
                         <div style="margin-top: 5px;">
                             <label style="display: inline-flex; align-items: center; cursor: pointer; font-size: 0.75em;">
                                 <input type="checkbox" id="currentManualTime" onchange="toggleManualTime('current')"
                                        style="margin-right: 5px; cursor: pointer;">
-                                <span style="color: #888;">Sisesta käsitsi</span>
+                                <span style="color: #888;">Enter manually</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="tool-info-display" id="currentToolInfo">
-                        <div class="tool-info-label">TÖÖRIISTU AASTAS:</div>
-                        <div class="tool-info-value" id="currentToolQuantity">0 tk</div>
+                        <div class="tool-info-label">TOOLS PER YEAR:</div>
+                        <div class="tool-info-value" id="currentToolQuantity">0 pc</div>
                     </div>
                 </div>
 
                 <!-- New Tool -->
                 <div class="tool-column new-tool">
-                    <h3>▲ UUS TÖÖRIIST (VENTEN)</h3>
+                    <h3>▲ NEW TOOL (VENTEN)</h3>
                     <div class="input-group">
-                        <label for="newToolName">Tööriista nimi</label>
+                        <label for="newToolName">Tool name</label>
                         <input type="text" id="newToolName" placeholder="Näit: Kennametal">
                     </div>
                     <div class="input-group">
-                        <label for="newToolPrice">Tööriista hind (€)</label>
+                        <label for="newToolPrice">Tool cost (€)</label>
                         <input type="number" id="newToolPrice" value="10.70" min="0" step="0.01">
                     </div>
                     <div class="input-group">
-                        <label for="newToolLife">Tööriista eluiga meetrites (m)</label>
+                        <label for="newToolLife">Tool life (m)</label>
                         <input type="number" id="newToolLife" value="29.75" min="0" step="0.01">
                         <div style="margin-top: 5px; padding: 8px; background: #0a0a0a; border: 1px solid #404040; border-radius: 4px;">
-                            <div style="font-size: 0.7em; color: #888; margin-bottom: 3px;">SOOVITUSLIK ELUIGA:</div>
+                            <div style="font-size: 0.7em; color: #888; margin-bottom: 3px;">RECOMMENDED LIFESPAN:</div>
                             <div id="newLifeEstimate" style="font-size: 0.85em; color: #00ff41;">
-                                Arvutatakse parameetrite põhjal
+                                Will be calculated according parameters
                             </div>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label for="newCutLength">Lõikepikkus detaili kohta (mm)</label>
+                        <label for="newCutLength">Cutting length per part (mm)</label>
                         <input type="number" id="newCutLength" value="1000" min="0" step="1">
                     </div>
 
                     <div style="border-top: 1px solid #404040; margin: 15px 0; padding-top: 15px;">
-                        <div style="color: #888; font-size: 0.7em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">LÕIKEPARAMEETRID</div>
+                        <div style="color: #888; font-size: 0.7em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">CUTTING PARAMETERS</div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="newDiameter">D - Tööriista diameeter (mm)</label>
+                                <label for="newDiameter">D - Tool diameter (mm)</label>
                                 <input type="number" id="newDiameter" value="16" min="0" step="0.1" oninput="calculateTimeEstimate('new')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="newVC">VC - joonkiirus (m/min)</label>
+                                <label for="newVC">VC - line speed (m/min)</label>
                                 <input type="number" id="newVC" value="235" min="0" step="1" oninput="calculateTimeEstimate('new')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="newAp">Ap - lõikesügavus (mm)</label>
+                                <label for="newAp">Ap - cutting depth (mm)</label>
                                 <input type="number" id="newAp" value="1.8" min="0" step="0.1" oninput="calculateTimeEstimate('new')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
@@ -853,34 +1044,34 @@
                                 <input type="number" id="newFeed" value="5600" min="0" step="1" oninput="calculateTimeEstimate('new')">
                             </div>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <label for="newAe">Ae - lõikelaius (mm)</label>
+                                <label for="newAe">Ae - cutting width (mm)</label>
                                 <input type="number" id="newAe" value="1.0" min="0" step="0.1" oninput="calculateTimeEstimate('new')">
                             </div>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Ajakulu/tk (sekundit) <span style="color: #888; font-size: 0.85em;">- arvutatakse automaatselt</span></label>
+                        <label>Time/piece (seconds) <span style="color: #888; font-size: 0.85em;">- calculated automatically</span></label>
                         <input id="newTimePerPart" value="357" type="text" readonly
                                style="background: #1a1a1a; color: #00ff41; cursor: not-allowed;"
-                               title="Arvutatakse lõikepikkuse ja parameetrite põhjal">
+                               title="Will be calculated according cutting length and parameters">
                         <div style="margin-top: 5px;">
                             <label style="display: inline-flex; align-items: center; cursor: pointer; font-size: 0.75em;">
                                 <input type="checkbox" id="newManualTime" onchange="toggleManualTime('new')"
                                        style="margin-right: 5px; cursor: pointer;">
-                                <span style="color: #888;">Sisesta käsitsi</span>
+                                <span style="color: #888;">Enter manually</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="tool-info-display" id="newToolInfo">
-                        <div class="tool-info-label">TÖÖRIISTU AASTAS:</div>
-                        <div class="tool-info-value" id="newToolQuantity">0 tk</div>
+                        <div class="tool-info-label">TOOLS PER YEAR:</div>
+                        <div class="tool-info-value" id="newToolQuantity">0 pc</div>
                     </div>
                 </div>
             </div>
 
-            <button class="calculate-btn" onclick="calculateEfficiency()">► ARVUTA EFEKTIIVSUS</button>
+            <button class="calculate-btn" onclick="calculateEfficiency()">► CALCULATE EFFICIENCY</button>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
                 <button class="export-btn" onclick="generatePDFReport()" style="
@@ -897,7 +1088,7 @@
           transition: all 0.2s;
         " onmouseover="this.style.background='#00ff41'; this.style.color='#000';"
                         onmouseout="this.style.background='#1a1a1a'; this.style.color='#00ff41';">
-                    📄 GENEREERI PDF
+                    📄 GENERATE PDF
                 </button>
 
                 <button class="email-btn" onclick="showEmailDialog()" style="
@@ -914,71 +1105,71 @@
           transition: all 0.2s;
         " onmouseover="this.style.background='#0088ff'; this.style.color='#000';"
                         onmouseout="this.style.background='#1a1a1a'; this.style.color='#0088ff';">
-                    ✉️ SAADA E-MAILILE
+                    ✉️ SEND TO E-MAIL
                 </button>
             </div>
         </div>
 
         <!-- Results Section -->
         <div class="section results" id="results" style="grid-column: 1 / -1;">
-            <h2>[ ANALÜÜSI TULEMUSED ]</h2>
+            <h2>[ ANALYSIS RESULTS ]</h2>
 
             <div class="metrics-grid">
                 <div class="metric-card" id="timeSavingsCard">
-                    <div class="metric-label">AJAVÕIT (H)</div>
+                    <div class="metric-label">TIME SAVINGS (H)</div>
                     <div class="metric-value" id="timeSavings">0</div>
                 </div>
                 <div class="metric-card" id="timeEfficiencyCard">
-                    <div class="metric-label">EFEKT. KASV (%)</div>
+                    <div class="metric-label">EFFICIENCY GAIN (%)</div>
                     <div class="metric-value" id="timeEfficiency">0%</div>
                 </div>
                 <div class="metric-card" id="toolQuantityCard">
-                    <div class="metric-label">TÖÖRIISTU KOKKUHOID</div>
-                    <div class="metric-value" id="toolQuantityDiff">0 tk</div>
+                    <div class="metric-label">TOOL QUANTITY SAVINGS</div>
+                    <div class="metric-value" id="toolQuantityDiff">0 pc</div>
                 </div>
                 <div class="metric-card" id="piecesPerToolCard">
-                    <div class="metric-label">TÜKKI/TÖÖRIIST Δ</div>
+                    <div class="metric-label">PIECES PER TOOL Δ</div>
                     <div class="metric-value" id="piecesPerToolDiff">+0</div>
                 </div>
                 <div class="metric-card" id="toolChangeCostCurrentCard">
-                    <div class="metric-label">VAHETUSE KULU (HETKEL)</div>
+                    <div class="metric-label">CHANGEOVER COST (CURRENT)</div>
                     <div class="metric-value" id="toolChangeCurrent">0 €</div>
                 </div>
                 <div class="metric-card" id="toolChangeCostNewCard">
-                    <div class="metric-label">VAHETUSE KULU (UUS)</div>
+                    <div class="metric-label">CHANGEOVER COST (NEW)</div>
                     <div class="metric-value" id="toolChangeNew">0 €</div>
                 </div>
                 <div class="metric-card" id="toolChangeSavingsCard">
-                    <div class="metric-label">VAHETUSE KOKKUHOID</div>
+                    <div class="metric-label">CHANGEOVER SAVINGS</div>
                     <div class="metric-value" id="toolChangeSavings">0 €</div>
                 </div>
                 <div class="metric-card" id="toolCostSavingsCard">
-                    <div class="metric-label">TÖÖRIISTA KULU Δ</div>
+                    <div class="metric-label">TOOL COST Δ</div>
                     <div class="metric-value" id="toolCostSavings">0 €</div>
                 </div>
             </div>
 
             <div style="margin-bottom: 15px;">
                 <div class="metric-card positive" id="totalSavingsCard">
-                    <div class="metric-label">AASTANE KOKKUHOID KOKKU</div>
+                    <div class="metric-label">ANNUAL TOTAL SAVINGS</div>
                     <div class="metric-value" id="totalSavings">0 €</div>
                 </div>
             </div>
 
             <div class="chart-container">
-                <h3>[ AASTANE KULU VÕRDLUS - EUR ]</h3>
+                <h3>[ ANNUAL COST COMPARISON - EUR ]</h3>
                 <div class="comparison-list" id="costComparison"></div>
             </div>
 
             <div class="chart-container">
-                <h3>[ LÕIKEPARAMEETRITE VÕRDLUS ]</h3>
+                <h3>[ CUTTING PARAMETERS COMPARISON ]</h3>
                 <div id="paramsComparison" style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.85em;">
                         <thead>
                         <tr style="border-bottom: 2px solid #404040;">
-                            <th style="text-align: left; padding: 8px; color: #888; text-transform: uppercase; font-size: 0.75em;">Parameeter</th>
-                            <th style="text-align: center; padding: 8px; color: #ff4444; text-transform: uppercase; font-size: 0.75em;">Hetkel</th>
-                            <th style="text-align: center; padding: 8px; color: #00ff41; text-transform: uppercase; font-size: 0.75em;">Uus</th>
+                            <th style="text-align: left; padding: 8px; color: #888; text-transform: uppercase; font-size: 0.75em;">Parameter</th>
+                            <th style="text-align: center; padding: 8px; color: #ff4444; text-transform: uppercase; font-size: 0.75em;">Current</th>
+                            <th style="text-align: center; padding: 8px; color: #00ff41; text-transform: uppercase; font-size: 0.75em;">New</th>
                             <th style="text-align: center; padding: 8px; color: #888; text-transform: uppercase; font-size: 0.75em;">Δ</th>
                         </tr>
                         </thead>
@@ -990,34 +1181,34 @@
 
             <div class="charts-row">
                 <div class="chart-container">
-                    <h3>[ TÖÖRIISTA ELUIGA VÕRDLUS - MEETRIT ]</h3>
+                    <h3>[ TOOL LIFE COMPARISON - METERS ]</h3>
                     <div class="comparison-list" id="lifeComparison"></div>
                 </div>
 
                 <div class="chart-container">
-                    <h3>[ TÜKKI/TÖÖRIIST VÕRDLUS ]</h3>
+                    <h3>[ PART/TOOL COMPARISON ]</h3>
                     <div class="comparison-list" id="piecesComparison"></div>
                 </div>
             </div>
 
             <div class="charts-row">
                 <div class="chart-container">
-                    <h3>[ KOKKUHOIU JAOTUS ]</h3>
+                    <h3>[ SAVINGS DISTRIBUTION ]</h3>
                     <canvas id="savingsPieChart" width="300" height="250"></canvas>
                     <div id="pieChartLegend" style="margin-top: 15px; text-align: center;"></div>
                 </div>
 
                 <div class="chart-container">
-                    <h3>[ EFEKTIIVSUSE VÕRDLUS ]</h3>
+                    <h3>[ EFFICIENCY COMPARISON ]</h3>
                     <div style="padding: 15px;">
                         <div class="efficiency-bar-wrapper">
-                            <div class="efficiency-label">HETKEL KASUTUSEL</div>
+                            <div class="efficiency-label">CURRENT IN USE</div>
                             <div class="efficiency-bar-bg">
                                 <div class="efficiency-bar current-eff" id="currentEffBar">100%</div>
                             </div>
                         </div>
                         <div class="efficiency-bar-wrapper" style="margin-top: 15px;">
-                            <div class="efficiency-label">UUS TÖÖRIIST</div>
+                            <div class="efficiency-label">NEW TOOL</div>
                             <div class="efficiency-bar-bg">
                                 <div class="efficiency-bar new-eff" id="newEffBar">120%</div>
                             </div>
@@ -1034,7 +1225,7 @@
                 </div>
 
                 <div class="summary">
-                    <h3>[ KOKKUVÕTE ]</h3>
+                    <h3>[ SUMMARY ]</h3>
                     <div class="summary-item">
                         <span>CURRENT SYS - ANNUAL COST:</span>
                         <span id="currentAnnualCost">0 €</span>
@@ -1068,26 +1259,26 @@
     <!-- Email Dialog Modal -->
     <div id="emailModal" class="dialog-container">
         <div class="dialog-content">
-            <h2 class="dialog-title">📧 SAADA RAPORT E-MAILILE</h2>
+            <h2 class="dialog-title">📧 SEND RAPORT TO E-MAIL</h2>
 
             <div class="form-group">
-                <label class="form-label" for="recipientEmail">Saaja e-mail:</label>
+                <label class="form-label" for="recipientEmail">Recipient email:</label>
                 <input type="email" id="recipientEmail" placeholder="example@company.com" class="form-input">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="senderEmail">Sinu e-mail (koopia):</label>
+                <label class="form-label" for="senderEmail">Your email (cc)::</label>
                 <input type="email" id="senderEmail" placeholder="your@email.com (valikuline)" class="form-input">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="emailMessage">Lisateade (valikuline):</label>
+                <label class="form-label" for="emailMessage">Additional message (optional):</label>
                 <textarea id="emailMessage" placeholder="Täiendav info..." class="form-textarea"></textarea>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <button onclick="closeEmailDialog()" class="btn-base btn-close">TÜHISTA</button>
-                <button onclick="sendEmail()" class="btn-base btn-send">SAADA</button>
+                <button onclick="closeEmailDialog()" class="btn-base btn-close">CANCEL</button>
+                <button onclick="sendEmail()" class="btn-base btn-send">SEND</button>
             </div>
 
             <div id="emailStatus" class="status-message"></div>
@@ -1289,12 +1480,12 @@
 
             // Fallback direct phrase replacements for static nodes that don't have selectors
             const fallbackTextMap = {
-                'LÕIKEPARAMEETRID': 'label.cutParams',
-                'SOOVITUSLIK ELUIGA:': 'label.recommendedLife',
-                'Ajakulu/tk (sekundit) - arvutatakse automaatselt': 'label.timePerPartDesc',
-                'Ükski pilt pole üles laaditud': 'photo.placeholder',
-                'Laadi pilt': 'upload.button',
-                'PNG, JPG, GIF (max 5MB) - Masina sildilt pilt': 'upload.info'
+                'CUT PARAMETERS': 'label.cutParams',
+                'RECOMMENDED LIFE:': 'label.recommendedLife',
+                'Time per part (s) - auto-calculated': 'label.timePerPartDesc',
+                'No image uploaded': 'photo.placeholder',
+                'Upload photo': 'upload.button',
+                'PNG, JPG, GIF (max 5MB) - Photo from machine label': 'upload.info'
             };
 
             // Replace exact text-only nodes matching keys above
@@ -1498,7 +1689,7 @@
 
                 if (vc === 0) {
                     document.getElementById(tool + 'LifeEstimate').innerHTML =
-                        '<span style="color: #ff4444;">Sisesta lõikekiirus (VC)</span>';
+                        '<span style="color: #ff4444;">Enter Cutting speed (VC)</span>';
                     return;
                 }
 
@@ -1626,14 +1817,14 @@
                 const currentToolLife = getNumber('currentToolLife', 0);
                 const currentCutLength = getNumber('currentCutLength', 0);
                 const currentTimePerPart = getNumber('currentTimePerPart', 0);
-                const currentToolName = getString('currentToolName', 'Hetkel kasutusel');
+                const currentToolName = getString('currentToolName', 'Currently in use');
 
                 // New tool
                 const newToolPrice = getNumber('newToolPrice', 0);
                 const newToolLife = getNumber('newToolLife', 0);
                 const newCutLength = getNumber('newCutLength', 0);
                 const newTimePerPart = getNumber('newTimePerPart', 0);
-                const newToolName = getString('newToolName', 'Uus tööriist');
+                const newToolName = getString('newToolName', 'New tool');
 
                 // Calculate pieces per tool safely
                 const currentPiecesPerTool = (currentCutLength > 0 && currentToolLife > 0) ? Math.floor(currentToolLife * 1000 / currentCutLength) : 0;
@@ -1644,9 +1835,9 @@
 
                 // Update UI safely
                 const safeSetText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
-                safeSetText('currentToolQuantity', currentToolQuantityNeeded + ' tk');
-                safeSetText('newToolQuantity', newToolQuantityNeeded + ' tk');
-                safeSetText('toolQuantityDiff', (currentToolQuantityNeeded - newToolQuantityNeeded) + ' tk');
+                safeSetText('currentToolQuantity', currentToolQuantityNeeded + ' pc');
+                safeSetText('newToolQuantity', newToolQuantityNeeded + ' pc');
+                safeSetText('toolQuantityDiff', (currentToolQuantityNeeded - newToolQuantityNeeded) + ' pc');
 
                 const currentToolCostPerYear = currentToolPrice * currentToolQuantityNeeded;
                 const newToolCostPerYear = newToolPrice * newToolQuantityNeeded;
@@ -1714,7 +1905,7 @@
                 createComparisonList('piecesComparison', [
                     { label: currentToolName, value: currentPiecesPerTool, class: 'current' },
                     { label: newToolName, value: newPiecesPerTool, class: 'new' }
-                ], 'tk');
+                ], 'pc');
 
                 createPieChart(toolCostDifference + toolChangeSavings, machineCostSavings);
 
@@ -1744,9 +1935,9 @@
                         errBox.style.whiteSpace = 'pre-wrap';
                         resultsEl.insertBefore(errBox, resultsEl.firstChild);
                     }
-                    errBox.textContent = 'Arvutusviga: ' + (error && error.message ? error.message : String(error)) + '\nVaadake konsooli täpsema info saamiseks.';
+                    errBox.textContent = 'Calculation error: ' + (error && error.message ? error.message : String(error)) + '\nVaadake konsooli täpsema info saamiseks.';
                 } else {
-                    alert('Arvutusviga: ' + (error && error.message ? error.message : String(error)));
+                    alert('Calculation error: ' + (error && error.message ? error.message : String(error)));
                 }
             }
         }
@@ -1804,7 +1995,7 @@
                 // Validate file size (max 5MB)
                 const maxSize = 5 * 1024 * 1024; // 5MB
                 if (file.size > maxSize) {
-                    alert('❌ Pilt on liiga suur. Maksimum 5MB.');
+                    alert('❌ Max 5MB, PNG/JPG/GIF');
                     // Clear input if present
                     const input = document.getElementById('machinePhoto'); if (input) input.value = '';
                     return;
@@ -1813,7 +2004,7 @@
                 // Validate file type
                 const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
                 if (!validTypes.includes(file.type)) {
-                    alert('❌ Vale piltide vorming. Kasutage PNG, JPG või GIF.');
+                    alert('❌ Max 5MB, PNG/JPG/GIF');
                     const input = document.getElementById('machinePhoto'); if (input) input.value = '';
                     return;
                 }
@@ -1828,7 +2019,7 @@
                     img.className = 'uploaded-image';
 
                     const removeBtn = document.createElement('button');
-                    removeBtn.textContent = '✕ Eemalda pilt';
+                    removeBtn.textContent = '✕ Remove photo';
                     removeBtn.style.cssText = `
                     display: block;
                     width: 100%;
@@ -1847,7 +2038,7 @@
                     removeBtn.onmouseover = function() { this.style.background = '#ff6666'; };
                     removeBtn.onmouseout = function() { this.style.background = 'var(--accent-red)'; };
                     removeBtn.onclick = function() {
-                        imageContainer.innerHTML = '<div class="photo-placeholder">Ükski pilt pole üles laaditud</div>';
+                        imageContainer.innerHTML = '<div class="photo-placeholder">No image uploaded!</div>';
                         const input = document.getElementById('machinePhoto'); if (input) input.value = '';
                         if (uploadSection) uploadSection.style.borderColor = 'var(--border-color)';
                     };
@@ -1862,7 +2053,7 @@
             }
         }
 
-        function updateParametersTable() {
+   /*     function updateParametersTable() {
             // Clear existing table rows
             const tbody = document.getElementById('paramsTableBody');
             if (tbody) {
@@ -1901,7 +2092,61 @@
               <input type="text" value="${param.new}" readonly style="background: #1a1a1a; color: #00ff41; border: none; padding: 8px 10px; border-radius: 4px; width: 100%; box-shadow: inset 0 0 5px rgba(0, 255, 65, 0.3);">
             </div>
           </td>
+*/
+        function updateParametersTable() {
+            const params = [
+                {
+                    name: 'VC - Line speed',
+                    current: parseFloat(document.getElementById('currentVC').value),
+                    new: parseFloat(document.getElementById('newVC').value),
+                    unit: 'm/min'
+                },
+                {
+                    name: 'Ap - Depth of cut',
+                    current: parseFloat(document.getElementById('currentAp').value),
+                    new: parseFloat(document.getElementById('newAp').value),
+                    unit: 'mm'
+                },
+                {
+                    name: 'S - RPM',
+                    current: parseFloat(document.getElementById('currentRPM').value),
+                    new: parseFloat(document.getElementById('newRPM').value),
+                    unit: ''
+                },
+                {
+                    name: 'F - mm/min',
+                    current: parseFloat(document.getElementById('currentFeed').value),
+                    new: parseFloat(document.getElementById('newFeed').value),
+                    unit: 'mm/min'
+                },
+                {
+                    name: 'Ae - Cutting width',
+                    current: parseFloat(document.getElementById('currentAe').value),
+                    new: parseFloat(document.getElementById('newAe').value),
+                    unit: 'mm'
+                }
+            ];
+
+            const tbody = document.getElementById('paramsTableBody');
+            tbody.innerHTML = '';
+
+            params.forEach(param => {
+                const diff = param.new - param.current;
+                const diffPercent = param.current !== 0 ? ((diff / param.current) * 100).toFixed(1) : 0;
+                const diffColor = diff > 0 ? '#00ff41' : (diff < 0 ? '#ff4444' : '#888');
+
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid #2a2a2a';
+                row.innerHTML = `
+                    <td style="padding: 10px 8px; color: #aaa;">${param.name}</td>
+                    <td style="padding: 10px 8px; text-align: center; color: #ff4444; font-family: Consolas;">${param.current} ${param.unit}</td>
+                    <td style="padding: 10px 8px; text-align: center; color: #00ff41; font-family: Consolas;">${param.new} ${param.unit}</td>
+                    <td style="padding: 10px 8px; text-align: center; color: ${diffColor}; font-family: Consolas; font-weight: 700;">
+                        ${diff >= 0 ? '+' : ''}${diff.toFixed(1)} (${diffPercent >= 0 ? '+' : ''}${diffPercent}%)
+                    </td>
+
         `;
+
                 tbody.appendChild(row);
             });
         }
@@ -1945,6 +2190,7 @@
         }
 
         // Draw a simple pie chart on canvas and update legend
+/*
         function createPieChart(toolSavings, timeSavings) {
             const canvas = document.getElementById('savingsPieChart');
             const legend = document.getElementById('pieChartLegend');
@@ -2034,7 +2280,154 @@
                     </div>
                 </div>
             `;
+
+
+
+
+
         }
+*/
+
+
+
+
+
+
+
+
+
+        function createPieChart(toolSavings, timeSavings) {
+            const canvas = document.getElementById('savingsPieChart');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 120;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const total = Math.abs(toolSavings) + Math.abs(timeSavings);
+
+            if (total === 0) {
+                ctx.fillStyle = '#e0e0e0';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle = '#666';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data', centerX, centerY);
+                return;
+            }
+
+            const toolPercentage = (Math.abs(toolSavings) / total) * 100;
+            const timePercentage = (Math.abs(timeSavings) / total) * 100;
+
+            let currentAngle = -Math.PI / 2;
+
+            // Draw tool savings slice
+            const toolAngle = (Math.abs(toolSavings) / total) * 2 * Math.PI;
+            ctx.fillStyle = '#00ff41';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + toolAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw time savings slice
+            currentAngle += toolAngle;
+            const timeAngle = (Math.abs(timeSavings) / total) * 2 * Math.PI;
+            ctx.fillStyle = '#0088ff';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + timeAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Add center white circle for donut effect
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Add total in center
+            ctx.fillStyle = '#00ff41';
+            ctx.font = 'bold 20px Consolas';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText((toolSavings + timeSavings).toFixed(0) + '€', centerX, centerY - 8);
+            ctx.font = '12px Consolas';
+            ctx.fillStyle = '#888';
+            ctx.fillText('TOTAL', centerX, centerY + 12);
+
+            // Update legend
+            const legend = document.getElementById('pieChartLegend');
+            legend.innerHTML = `
+                <div class="pie-legend-item">
+                    <div class="pie-legend-color" style="background: #00ff41;"></div>
+                    <span>TOOL COST (${toolPercentage.toFixed(0)}%)</span>
+                </div>
+                <div class="pie-legend-item">
+                    <div class="pie-legend-color" style="background: #0088ff;"></div>
+                    <span>MACHINE TIME (${timePercentage.toFixed(0)}%)</span>
+                </div>
+            `;
+        }
+
+        function updateEfficiencyBars(currentTime, newTime) {
+            const maxTime = Math.max(currentTime, newTime);
+
+            // Current tool is baseline at 100%
+            const currentBar = document.getElementById('currentEffBar');
+            currentBar.style.width = '100%';
+            currentBar.textContent = '100% [BASE]';
+
+            // New tool relative to current
+            const newBar = document.getElementById('newEffBar');
+            const newPercentage = maxTime > 0 ? (currentTime / newTime * 100) : 100;
+            newBar.style.width = Math.min(newPercentage, 200) + '%';
+            newBar.textContent = newPercentage.toFixed(0) + '% [EFF]';
+
+            // Change color based on performance
+            if (newPercentage > 100) {
+                newBar.style.background = '#00ff41';
+                newBar.style.boxShadow = '0 0 10px rgba(0, 255, 65, 0.5)';
+            } else {
+                newBar.style.background = '#ff4444';
+                newBar.style.boxShadow = '0 0 10px rgba(255, 68, 68, 0.5)';
+            }
+        }
+
+        function updateSavingsIndicator(totalSavings) {
+            const indicator = document.getElementById('savingsIndicator');
+            indicator.classList.remove('positive', 'negative');
+
+            if (totalSavings > 0) {
+                indicator.classList.add('positive');
+                indicator.innerHTML = `
+                    <div class="savings-indicator-icon">✓</div>
+                    <div class="savings-indicator-text">SAVING: ${totalSavings.toFixed(0)} €/a</div>
+                    <div class="savings-indicator-subtext">STATUS: OPTIMAL | RECCOMENED SOLUTION</div>
+                `;
+            } else if (totalSavings < 0) {
+                indicator.classList.add('negative');
+                indicator.innerHTML = `
+                    <div class="savings-indicator-icon">✕</div>
+                    <div class="savings-indicator-text">OVERSEAS COST: ${Math.abs(totalSavings).toFixed(0)} €/a</div>
+                    <div class="savings-indicator-subtext">STATUS: NON-OPTIMAL | RECONDITION REQUIRED</div>
+                `;
+            } else {
+                indicator.classList.add('positive');
+                indicator.innerHTML = `
+                    <div class="savings-indicator-icon">≈</div>
+                    <div class="savings-indicator-text">NEUTRAL: 0 €/a</div>
+                    <div class="savings-indicator-subtext">STATUS: EQUAL | ADDITIONAL CRITERIA IS NEEDED</div>
+                `;
+            }
+        }
+
+
 
         // Expose helpers to window as well
         try { window.colorCodeMetric = colorCodeMetric; } catch (e) {}
@@ -2258,7 +2651,7 @@
                 if (y > 250) { pdf.addPage(); y = 20; }
                 pdf.setFontSize(10);
                 pdf.setTextColor('#888');
-                pdf.text('Kokkuvõte saadud andmete põhjal', marginLeft, y);
+                pdf.text('This is an automatically generated report.', marginLeft, y);
                 y += 6;
 
                 const summaryItems = [
@@ -2374,7 +2767,7 @@
                     }
                     const json = await res.json();
                     if (json && json.success) {
-                        if (status) status.textContent = 'Raport saadetud e-kirjana.';
+                        if (status) status.textContent = 'Raport sent by e-mail.';
                         closeEmailDialog();
                         return;
                     } else {

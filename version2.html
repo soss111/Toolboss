@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venten ToolBoss</title>
+    <link rel="icon" href="https://www.venten.ee/static/version1769687684/frontend/Zaproo/venten/et_EE/images/logo.png" type="image/png">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='100%25' height='100%25' fill='%2300aa00'/%3E%3Ctext x='50%25' y='50%25' font-size='10' dominant-baseline='middle' text-anchor='middle' fill='white'%3EV%3C/text%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #0a0a0a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888;
+            --text-tertiary: #666;
+            --border-color: #404040;
+            --accent-green: #00ff41;
+            --accent-red: #ff4444;
+            --accent-blue: #0088ff;
+            --input-bg: #2a2a2a;
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8e8e8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border-color: #d0d0d0;
+            --accent-green: #00aa00;
+            --accent-red: #cc0000;
+            --accent-blue: #0066cc;
+            --input-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background: var(--bg-primary);
+            padding: 15px;
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--bg-primary), var(--bg-secondary));
+            color: var(--accent-green);
+            padding: 15px 25px;
+            border-bottom: 3px solid var(--accent-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            height: 50px;
+            width: auto;
+            max-width: 150px;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Theme Toggle Switch */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-checkbox {
+            display: none;
+        }
+
+        .toggle-label {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-checkbox:checked + .toggle-label {
+            background: var(--accent-green);
+        }
+
+        .toggle-label::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-checkbox:checked + .toggle-label::before {
+            left: 28px;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: opacity 0.3s;
+        }
+
+        .toggle-icon.sun {
+            opacity: 0;
+        }
+
+        body.light-mode .toggle-icon.sun {
+            opacity: 1;
+        }
+
+        body.light-mode .toggle-icon.moon {
+            opacity: 0;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 350px 350px 1fr;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .section {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        body.light-mode .section {
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            color: var(--accent-green);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 8px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: 2px solid var(--accent-green);
+            outline-offset: -2px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .btn:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: var(--accent-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-green);
+        }
+
+        .results {
+            grid-column: span 3;
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0,255,65,0.2);
+        }
+
+        body.light-mode .results {
+            box-shadow: 0 0 15px rgba(0,170,0,0.15);
+        }
+
+        .results h2 {
+            color: var(--accent-green);
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .result-item h3 {
+            color: var(--accent-blue);
+            font-size: 0.9em;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .result-item .value {
+            color: var(--accent-green);
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-top: 15px;
+        }
+
+        .chart-container h3 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
+
+        .image-upload {
+            margin-top: 12px;
+        }
+
+        .upload-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .upload-label {
+            display: block;
+            color: var(--accent-green);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            width: 100%;
+        }
+
+        .upload-btn:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .upload-info {
+            color: var(--text-tertiary);
+            font-size: 0.8em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #imageContainer,
+        .uploaded-image-container {
+            margin-top: 10px;
+            min-height: 150px;
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        #imageContainer img,
+        .uploaded-image-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        #imageContainer .placeholder,
+        .photo-placeholder {
+            color: var(--text-tertiary);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+
+        .uploaded-image-container.has-image {
+            border-style: solid;
+            background: var(--bg-secondary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-green);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-red);
+        }
+
+        #emailStatus {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--accent-green);
+            display: none;
+        }
+
+        @media (max-width: 1200px) {
+            .content {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .results {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .results {
+                grid-column: span 1;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <img src="https://www.venten.ee/static/version1769687684/frontend/Zaproo/venten/et_EE/images/logo.png"
+                 alt="Venten Logo"
+                 class="header-logo"
+                 onerror="this.style.display='none'">
+            <div class="header-title">
+                <h1>ToolBoss</h1>
+                <p>Professional Tool Analysis System</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="theme-toggle">
+                <span class="toggle-icon moon">🌙</span>
+                <input type="checkbox" id="themeToggle" class="toggle-checkbox">
+                <label for="themeToggle" class="toggle-label"></label>
+                <span class="toggle-icon sun">☀️</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Current Tool Section -->
+        <div class="section">
+            <h2>Current Tool</h2>
+
+            <div class="input-group">
+                <label>Tool Name</label>
+                <input type="text" id="currentToolName" placeholder="Enter tool name">
+            </div>
+
+            <div class="input-group">
+                <label>Tool Type</label>
+                <select id="currentToolType">
+                    <option value="">Select type...</option>
+                    <option value="drill">Drill</option>
+                    <option value="saw">Saw</option>
+                    <option value="grinder">Grinder</option>
+                    <option value="sander">Sander</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Purchase Price (€)</label>
+                    <input type="number" id="currentPrice" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Service Life (years)</label>
+                    <input type="number" id="currentLifespan" value="5" min="1" step="0.5">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Annual Service Cost (€)</label>
+                    <input type="number" id="currentServiceCost" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Energy Cost/Year (€)</label>
+                    <input type="number" id="currentEnergyCost" value="0" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Hours of Use/Year</label>
+                <input type="number" id="currentUsageHours" value="1000" min="0" step="10">
+            </div>
+
+            <div class="input-group">
+                <label>Downtime Hours/Year</label>
+                <input type="number" id="currentDowntime" value="0" min="0" step="1">
+            </div>
+
+            <div class="input-group">
+                <label>Hourly Rate (€)</label>
+                <input type="number" id="hourlyRate" value="25" min="0" step="0.5">
+            </div>
+
+            <!-- Machine Label Photo Upload -->
+            <div class="upload-section">
+                <label class="upload-label">📸 Machine Label Photo</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">
+                    <button type="button" class="upload-btn" onclick="document.getElementById('machinePhoto').click();">
+                        Upload Image
+                    </button>
+                </div>
+                <div class="upload-info">
+                    PNG, JPG, GIF (max 5MB) - Machine label picture
+                </div>
+                <div class="uploaded-image-container" id="imageContainer">
+                    <div class="photo-placeholder">No image uploaded</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Tool Section -->
+        <div class="section">
+            <h2>New Tool</h2>
+
+            <div class="input-group">
+                <label>Tool Name</label>
+                <input type="text" id="newToolName" placeholder="Enter tool name">
+            </div>
+
+            <div class="input-group">
+                <label>Tool Type</label>
+                <select id="newToolType">
+                    <option value="">Select type...</option>
+                    <option value="drill">Drill</option>
+                    <option value="saw">Saw</option>
+                    <option value="grinder">Grinder</option>
+                    <option value="sander">Sander</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Purchase Price (€)</label>
+                    <input type="number" id="newPrice" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Service Life (years)</label>
+                    <input type="number" id="newLifespan" value="10" min="1" step="0.5">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Annual Service Cost (€)</label>
+                    <input type="number" id="newServiceCost" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Energy Cost/Year (€)</label>
+                    <input type="number" id="newEnergyCost" value="0" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Hours of Use/Year</label>
+                <input type="number" id="newUsageHours" value="1000" min="0" step="10">
+            </div>
+
+            <div class="input-group">
+                <label>Expected Downtime Hours/Year</label>
+                <input type="number" id="newDowntime" value="0" min="0" step="1">
+            </div>
+
+            <div class="input-group">
+                <label>Efficiency Gain (%)</label>
+                <input type="number" id="efficiencyGain" value="0" min="0" max="100" step="1">
+            </div>
+
+            <div class="input-group">
+                <label>Additional Notes</label>
+                <textarea id="notes" placeholder="Any additional information..."></textarea>
+            </div>
+
+            <button class="btn" onclick="calculateSavings()">Calculate Analysis</button>
+        </div>
+
+        <!-- Analysis Results Section -->
+        <div class="section">
+            <h2>Quick Summary</h2>
+
+            <div class="result-item">
+                <h3>Annual Savings</h3>
+                <div class="value" id="totalSavings">0 €</div>
+            </div>
+
+            <div class="result-item">
+                <h3>Payback Period</h3>
+                <div class="value" id="paybackPeriod">0 years</div>
+            </div>
+
+            <div class="result-item">
+                <h3>Financial Gain</h3>
+                <div class="value" id="financialGain">0%</div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Cost Breakdown</h3>
+                <canvas id="savingsPieChart"></canvas>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn" onclick="generatePDFReport()">Download PDF</button>
+                <button class="btn btn-secondary" onclick="showEmailDialog()">Send via Email</button>
+            </div>
+        </div>
+
+        <!-- Detailed Results -->
+        <div class="results" id="resultsSection" style="display:none;">
+            <h2>Detailed Analysis Results</h2>
+
+            <div class="results-grid">
+                <div class="result-item">
+                    <h3>Current Tool - Annual Cost</h3>
+                    <div class="value" id="currentAnnualCost">0 €</div>
+                </div>
+
+                <div class="result-item">
+                    <h3>New Tool - Annual Cost</h3>
+                    <div class="value" id="newAnnualCost">0 €</div>
+                </div>
+
+                <div class="result-item">
+                    <h3>Annual Savings</h3>
+                    <div class="value" id="detailedSavings">0 €</div>
+                </div>
+
+                <div class="result-item">
+                    <h3>Downtime Savings</h3>
+                    <div class="value" id="downtimeSavings">0 €</div>
+                </div>
+
+                <div class="result-item">
+                    <h3>Efficiency Savings</h3>
+                    <div class="value" id="efficiencySavings">0 €</div>
+                </div>
+
+                <div class="result-item">
+                    <h3>ROI Period</h3>
+                    <div class="value" id="roiPeriod">0 years</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Cost Comparison Over Time</h3>
+                <canvas id="costComparisonChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Email Modal -->
+<div id="emailModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeEmailDialog()">×</button>
+        <h2>Send Report via Email</h2>
+
+        <div class="input-group">
+            <label>Recipient Email *</label>
+            <input type="email" id="recipientEmail" placeholder="recipient@example.com" required>
+        </div>
+
+        <div class="input-group">
+            <label>Your Email (CC)</label>
+            <input type="email" id="senderEmail" placeholder="your@email.com">
+        </div>
+
+        <div class="input-group">
+            <label>Message</label>
+            <textarea id="emailMessage" placeholder="Add a message to the email..."></textarea>
+        </div>
+
+        <div id="emailStatus"></div>
+
+        <div class="action-buttons">
+            <button class="btn" onclick="sendEmail()">Send Email</button>
+            <button class="btn btn-secondary" onclick="closeEmailDialog()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js and jsPDF libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+        themeToggle.checked = true;
+    }
+
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+
+    // Image upload functionality
+    function handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Check file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size exceeds 5MB. Please choose a smaller image.');
+            event.target.value = '';
+            return;
+        }
+
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file (PNG, JPG, GIF).');
+            event.target.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const container = document.getElementById('imageContainer');
+            container.innerHTML = `<img src="${e.target.result}" alt="Machine Label Photo">`;
+            container.classList.add('has-image');
+        };
+        reader.onerror = function() {
+            alert('Error reading file. Please try again.');
+            event.target.value = '';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Legacy support for old image upload element
+    const oldImageUpload = document.getElementById('imageUpload');
+    if (oldImageUpload) {
+        oldImageUpload.addEventListener('change', function(e) {
+            handlePhotoUpload(e);
+        });
+    }
+
+    // Chart variables
+    let pieChart = null;
+    let comparisonChart = null;
+
+    // Calculate savings and generate report
+    function calculateSavings() {
+        // Get current tool values
+        const currentPrice = parseFloat(document.getElementById('currentPrice').value) || 0;
+        const currentLifespan = parseFloat(document.getElementById('currentLifespan').value) || 1;
+        const currentServiceCost = parseFloat(document.getElementById('currentServiceCost').value) || 0;
+        const currentEnergyCost = parseFloat(document.getElementById('currentEnergyCost').value) || 0;
+        const currentUsageHours = parseFloat(document.getElementById('currentUsageHours').value) || 0;
+        const currentDowntime = parseFloat(document.getElementById('currentDowntime').value) || 0;
+        const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+
+        // Get new tool values
+        const newPrice = parseFloat(document.getElementById('newPrice').value) || 0;
+        const newLifespan = parseFloat(document.getElementById('newLifespan').value) || 1;
+        const newServiceCost = parseFloat(document.getElementById('newServiceCost').value) || 0;
+        const newEnergyCost = parseFloat(document.getElementById('newEnergyCost').value) || 0;
+        const newUsageHours = parseFloat(document.getElementById('newUsageHours').value) || 0;
+        const newDowntime = parseFloat(document.getElementById('newDowntime').value) || 0;
+        const efficiencyGain = parseFloat(document.getElementById('efficiencyGain').value) || 0;
+
+        // Calculate annual costs
+        const currentAnnualDepreciation = currentPrice / currentLifespan;
+        const currentDowntimeCost = currentDowntime * hourlyRate;
+        const currentAnnualCost = currentAnnualDepreciation + currentServiceCost + currentEnergyCost + currentDowntimeCost;
+
+        const newAnnualDepreciation = newPrice / newLifespan;
+        const newDowntimeCost = newDowntime * hourlyRate;
+        const newAnnualCost = newAnnualDepreciation + newServiceCost + newEnergyCost + newDowntimeCost;
+
+        // Calculate savings
+        const downtimeSavings = (currentDowntime - newDowntime) * hourlyRate;
+        const efficiencySavings = (currentUsageHours * (efficiencyGain / 100) * hourlyRate);
+        const totalSavings = currentAnnualCost - newAnnualCost + efficiencySavings;
+
+        // Calculate payback period
+        const paybackPeriod = newPrice / (totalSavings > 0 ? totalSavings : 1);
+        const financialGain = currentAnnualCost > 0 ? ((totalSavings / currentAnnualCost) * 100) : 0;
+
+        // Update summary display
+        document.getElementById('totalSavings').textContent = totalSavings.toFixed(0) + ' €';
+        document.getElementById('paybackPeriod').textContent = paybackPeriod.toFixed(1) + ' years';
+        document.getElementById('financialGain').textContent = financialGain.toFixed(1) + '%';
+
+        // Update detailed results
+        document.getElementById('currentAnnualCost').textContent = currentAnnualCost.toFixed(0) + ' €';
+        document.getElementById('newAnnualCost').textContent = newAnnualCost.toFixed(0) + ' €';
+        document.getElementById('detailedSavings').textContent = totalSavings.toFixed(0) + ' €';
+        document.getElementById('downtimeSavings').textContent = downtimeSavings.toFixed(0) + ' €';
+        document.getElementById('efficiencySavings').textContent = efficiencySavings.toFixed(0) + ' €';
+        document.getElementById('roiPeriod').textContent = paybackPeriod.toFixed(1) + ' years';
+
+        // Show results section
+        document.getElementById('resultsSection').style.display = 'block';
+
+        // Generate charts
+        generatePieChart(currentAnnualCost, newAnnualCost, totalSavings);
+        generateComparisonChart(currentAnnualCost, newAnnualCost, paybackPeriod);
+    }
+
+    function generatePieChart(currentCost, newCost, savings) {
+        const ctx = document.getElementById('savingsPieChart').getContext('2d');
+
+        if (pieChart) {
+            pieChart.destroy();
+        }
+
+        const isDarkMode = !document.body.classList.contains('light-mode');
+        const textColor = isDarkMode ? '#e0e0e0' : '#1a1a1a';
+
+        pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Current Cost', 'New Cost', 'Savings'],
+                datasets: [{
+                    data: [currentCost, newCost, Math.max(0, savings)],
+                    backgroundColor: [
+                        '#ff4444',
+                        '#0088ff',
+                        '#00ff41'
+                    ],
+                    borderColor: isDarkMode ? '#1a1a1a' : '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: textColor,
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed.toFixed(0) + ' €';
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function generateComparisonChart(currentCost, newCost, paybackPeriod) {
+        const ctx = document.getElementById('costComparisonChart').getContext('2d');
+
+        if (comparisonChart) {
+            comparisonChart.destroy();
+        }
+
+        const years = Math.ceil(paybackPeriod) + 2;
+        const labels = [];
+        const currentCosts = [];
+        const newCosts = [];
+
+        for (let i = 0; i <= years; i++) {
+            labels.push('Year ' + i);
+            currentCosts.push(currentCost * i);
+            newCosts.push((parseFloat(document.getElementById('newPrice').value) || 0) + (newCost * i));
+        }
+
+        const isDarkMode = !document.body.classList.contains('light-mode');
+        const textColor = isDarkMode ? '#e0e0e0' : '#1a1a1a';
+        const gridColor = isDarkMode ? '#404040' : '#d0d0d0';
+
+        comparisonChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Current Tool Total Cost',
+                        data: currentCosts,
+                        borderColor: '#ff4444',
+                        backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'New Tool Total Cost',
+                        data: newCosts,
+                        borderColor: '#0088ff',
+                        backgroundColor: 'rgba(0, 136, 255, 0.1)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: textColor,
+                            padding: 15
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: textColor,
+                            callback: function(value) {
+                                return value.toFixed(0) + ' €';
+                            }
+                        },
+                        grid: {
+                            color: gridColor
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: textColor
+                        },
+                        grid: {
+                            color: gridColor
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // PDF Generation using jsPDF
+    async function generatePDFBlob() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        // Add title
+        pdf.setFontSize(20);
+        pdf.setTextColor(0, 170, 0);
+        pdf.text('Venten ToolBoss Report', 105, 20, { align: 'center' });
+
+        // Add current date
+        pdf.setFontSize(10);
+        pdf.setTextColor(136, 136, 136);
+        pdf.text('Generated: ' + new Date().toLocaleDateString(), 105, 28, { align: 'center' });
+
+        let yPos = 40;
+
+        // Current Tool Info
+        pdf.setFontSize(14);
+        pdf.setTextColor(0, 170, 0);
+        pdf.text('Current Tool', 20, yPos);
+        yPos += 8;
+
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Name: ' + (document.getElementById('currentToolName').value || 'N/A'), 20, yPos);
+        yPos += 6;
+        pdf.text('Type: ' + (document.getElementById('currentToolType').value || 'N/A'), 20, yPos);
+        yPos += 6;
+        pdf.text('Annual Cost: ' + document.getElementById('currentAnnualCost').textContent, 20, yPos);
+        yPos += 12;
+
+        // New Tool Info
+        pdf.setFontSize(14);
+        pdf.setTextColor(0, 170, 0);
+        pdf.text('New Tool', 20, yPos);
+        yPos += 8;
+
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Name: ' + (document.getElementById('newToolName').value || 'N/A'), 20, yPos);
+        yPos += 6;
+        pdf.text('Type: ' + (document.getElementById('newToolType').value || 'N/A'), 20, yPos);
+        yPos += 6;
+        pdf.text('Annual Cost: ' + document.getElementById('newAnnualCost').textContent, 20, yPos);
+        yPos += 12;
+
+        // Financial Results
+        pdf.setFontSize(14);
+        pdf.setTextColor(0, 170, 0);
+        pdf.text('Financial Results', 20, yPos);
+        yPos += 8;
+
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Annual Savings: ' + document.getElementById('totalSavings').textContent, 20, yPos);
+        yPos += 6;
+        pdf.text('Payback Period: ' + document.getElementById('paybackPeriod').textContent, 20, yPos);
+        yPos += 6;
+        pdf.text('Financial Gain: ' + document.getElementById('financialGain').textContent, 20, yPos);
+        yPos += 6;
+        pdf.text('Downtime Savings: ' + document.getElementById('downtimeSavings').textContent, 20, yPos);
+        yPos += 6;
+        pdf.text('Efficiency Savings: ' + document.getElementById('efficiencySavings').textContent, 20, yPos);
+        yPos += 10;
+
+        // Add uploaded machine image if present
+        try {
+            const imgContainer = document.getElementById('imageContainer');
+            const imgEl = imgContainer ? imgContainer.querySelector('img') : null;
+            if (imgEl && imgEl.src && !imgEl.src.includes('placeholder')) {
+                const maxW = 80;
+                const maxH = 80;
+                if (yPos + maxH > 250) {
+                    pdf.addPage();
+                    yPos = 40;
+                }
+                pdf.setFontSize(12);
+                pdf.setTextColor(0, 170, 0);
+                pdf.text('Machine Label Photo:', 20, yPos);
+                yPos += 8;
+                pdf.addImage(imgEl.src, 'JPEG', 20, yPos, maxW, maxH);
+                yPos += maxH + 10;
+            }
+        } catch (e) {
+            console.warn('Could not add machine photo to PDF', e);
+        }
+
+        // Add charts if possible
+        try {
+            const pieCanvas = document.getElementById('savingsPieChart');
+            if (pieCanvas) {
+                const imgData = pieCanvas.toDataURL('image/png');
+                pdf.addPage();
+                pdf.text('Cost Breakdown', 105, 20, { align: 'center' });
+                pdf.addImage(imgData, 'PNG', 30, 30, 150, 150);
+            }
+        } catch (e) {
+            console.warn('Could not add pie chart to PDF', e);
+        }
+
+        try {
+            const compCanvas = document.getElementById('costComparisonChart');
+            if (compCanvas) {
+                const imgData = compCanvas.toDataURL('image/png');
+                pdf.addPage();
+                pdf.text('Cost Comparison Over Time', 105, 20, { align: 'center' });
+                pdf.addImage(imgData, 'PNG', 20, 30, 170, 120);
+            }
+        } catch (e) {
+            console.warn('Could not add comparison chart to PDF', e);
+        }
+
+        return pdf.output('blob');
+    }
+
+    async function generatePDFReport() {
+        try {
+            const statusEl = document.getElementById('emailStatus');
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.textContent = 'Generating PDF...';
+            }
+
+            const blob = await generatePDFBlob();
+            const url = URL.createObjectURL(blob);
+
+            // Open in new tab
+            window.open(url, '_blank');
+
+            // Download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ToolBoss-Report.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            if (statusEl) {
+                statusEl.textContent = 'PDF generated successfully.';
+            }
+        } catch (err) {
+            console.error('PDF generation error:', err);
+            alert('PDF generation failed: ' + err.message);
+        }
+    }
+
+    // Email Modal Functions
+    function showEmailDialog() {
+        const modal = document.getElementById('emailModal');
+        if (modal) {
+            modal.classList.add('show');
+            const recipientInput = document.getElementById('recipientEmail');
+            if (recipientInput) recipientInput.focus();
+        }
+    }
+
+    function closeEmailDialog() {
+        const modal = document.getElementById('emailModal');
+        if (modal) {
+            modal.classList.remove('show');
+            const statusEl = document.getElementById('emailStatus');
+            if (statusEl) {
+                statusEl.textContent = '';
+                statusEl.style.display = 'none';
+            }
+        }
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('emailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEmailDialog();
+        }
+    });
+
+    // Close modal on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeEmailDialog();
+        }
+    });
+
+    // Send email function
+    async function sendEmail() {
+        try {
+            const recipient = document.getElementById('recipientEmail').value;
+            const sender = document.getElementById('senderEmail').value;
+            const message = document.getElementById('emailMessage').value;
+            const statusEl = document.getElementById('emailStatus');
+
+            if (!recipient) {
+                if (statusEl) {
+                    statusEl.style.display = 'block';
+                    statusEl.textContent = 'Please enter recipient email.';
+                }
+                return;
+            }
+
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.textContent = 'Generating PDF...';
+            }
+
+            const blob = await generatePDFBlob();
+
+            // Since we can't send emails directly from browser, we'll open mailto and download PDF
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+
+            const subject = encodeURIComponent('Venten ToolBoss Report');
+            const body = encodeURIComponent(message + '\n\n(Please attach the downloaded PDF to this email)');
+            window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+
+            if (statusEl) {
+                statusEl.textContent = 'PDF generated. Please attach it to the email that opened.';
+            }
+
+            setTimeout(() => {
+                closeEmailDialog();
+            }, 3000);
+
+        } catch (err) {
+            console.error('Email sending error:', err);
+            const statusEl = document.getElementById('emailStatus');
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.textContent = 'Error: ' + err.message;
+            }
+        }
+    }
+</script>
+</body>
+</html>
