@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lõikeinstrumentide Otsustaja 3000™</title>
+    <title>Tool Selection System v3.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Urbanist:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FF6B00;
-            --secondary: #FFD100;
-            --dark: #1a1a1a;
-            --light: #f5f5f5;
-            --accent: #00D4FF;
+            --bg: #0a0a0a;
+            --surface: #151515;
+            --border: #2a2a2a;
+            --text: #e0e0e0;
+            --text-dim: #6a6a6a;
+            --accent: #00ff88;
+            --accent-dim: #00aa55;
+            --grid: #1a1a1a;
         }
 
         * {
@@ -23,72 +26,92 @@
         }
 
         body {
-            font-family: 'Urbanist', sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
 
+        /* Technical grid background */
         body::before {
             content: '';
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background:
-                    radial-gradient(circle at 20% 50%, rgba(255, 107, 0, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 20%, rgba(255, 209, 0, 0.05) 0%, transparent 50%);
-            animation: ambient 20s ease-in-out infinite;
-        }
-
-        @keyframes ambient {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(-50px, -30px) rotate(5deg); }
+            inset: 0;
+            background-image:
+                    linear-gradient(var(--grid) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            pointer-events: none;
         }
 
         .container {
             position: relative;
             z-index: 1;
-            max-width: 800px;
-            width: 90%;
+            max-width: 900px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .header {
             text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
         }
 
         h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            color: var(--light);
-            margin-bottom: 1rem;
-            text-shadow: 0 0 40px rgba(255, 107, 0, 0.5);
-            letter-spacing: 3px;
-            animation: glow 3s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 40px rgba(255, 107, 0, 0.5), 0 0 20px rgba(255, 107, 0, 0.3); }
-            50% { text-shadow: 0 0 60px rgba(255, 107, 0, 0.8), 0 0 30px rgba(255, 107, 0, 0.5); }
-        }
-
-        .subtitle {
-            color: var(--accent);
-            font-size: 1.2rem;
-            margin-bottom: 3rem;
-            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+        }
+
+        .version {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .version-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            margin-left: 0.5rem;
+            color: var(--accent);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .wheel-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 2px;
         }
 
         .wheel-container {
             position: relative;
-            width: 500px;
-            height: 500px;
-            margin: 0 auto 3rem;
-            max-width: 90vw;
-            max-height: 90vw;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            margin: 0 auto;
         }
 
         .wheel {
@@ -97,15 +120,8 @@
             border-radius: 50%;
             position: relative;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            box-shadow:
-                    0 0 0 15px var(--dark),
-                    0 0 0 18px var(--secondary),
-                    0 20px 50px rgba(0, 0, 0, 0.5),
-                    inset 0 0 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .wheel.spinning {
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            border: 2px solid var(--border);
+            background: var(--bg);
         }
 
         .segment {
@@ -117,35 +133,41 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
             text-align: center;
-            padding: 20px;
-            transition: all 0.3s;
-        }
-
-        .segment:hover {
-            filter: brightness(1.2);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
         .segment span {
-            transform: rotate(-67.5deg) translateX(-30px);
+            transform: rotate(-67.5deg) translateX(-40px);
             display: block;
-            max-width: 120px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            max-width: 100px;
+            line-height: 1.3;
+        }
+
+        .segment:nth-child(odd) {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .segment:nth-child(even) {
+            background: var(--bg);
+            color: var(--text-dim);
         }
 
         .pointer {
             position: absolute;
-            top: -30px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-top: 50px solid var(--secondary);
-            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 24px solid var(--accent);
             z-index: 10;
         }
 
@@ -154,34 +176,81 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 60px;
+            height: 60px;
+            background: var(--bg);
+            border: 2px solid var(--border);
             border-radius: 50%;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
             z-index: 5;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            color: var(--dark);
-            font-size: 2rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .control-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 2px;
+        }
+
+        .panel-header {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            font-size: 0.85rem;
+        }
+
+        .status-label {
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+
+        .status-value {
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--accent);
+            font-weight: 600;
         }
 
         .spin-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            padding: 1.5rem 4rem;
-            font-size: 1.5rem;
-            font-weight: 900;
-            font-family: 'Bebas Neue', sans-serif;
-            color: var(--dark);
+            width: 100%;
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
             cursor: pointer;
-            border-radius: 50px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            border-radius: 2px;
             position: relative;
             overflow: hidden;
         }
@@ -189,24 +258,22 @@
         .spin-btn::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: left 0.3s;
+            z-index: -1;
         }
 
         .spin-btn:hover::before {
-            width: 300px;
-            height: 300px;
+            left: 0;
         }
 
         .spin-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 40px rgba(255, 107, 0, 0.6);
+            color: var(--bg);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
         }
 
         .spin-btn:active {
@@ -214,131 +281,234 @@
         }
 
         .spin-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.4;
             cursor: not-allowed;
-            transform: scale(1);
         }
 
-        .result {
-            margin-top: 2rem;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 107, 0, 0.3);
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .spin-btn:disabled:hover {
+            color: var(--accent);
+            box-shadow: none;
+        }
+
+        .result-panel {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            min-height: 100px;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s;
+            transform: translateY(10px);
+            transition: all 0.3s;
         }
 
-        .result.show {
+        .result-panel.show {
             opacity: 1;
             transform: translateY(0);
+            border-color: var(--accent);
         }
 
-        .result-text {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--secondary);
+        .result-header {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            line-height: 1.4;
+            letter-spacing: 1px;
         }
 
-        .result-emoji {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            display: block;
-            animation: bounce 0.6s ease-in-out;
+        .result-content {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--accent);
+            line-height: 1.6;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
         }
 
-        @media (max-width: 600px) {
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+        }
+
+        .metric-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
             .wheel-container {
-                width: 350px;
-                height: 350px;
+                max-width: 300px;
             }
 
             .segment {
-                font-size: 0.7rem;
+                font-size: 0.6rem;
             }
+        }
 
-            .spin-btn {
-                padding: 1rem 2.5rem;
-                font-size: 1.2rem;
-            }
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Lõikeinstrumentide Otsustaja 3000™</h1>
-    <p class="subtitle">🎯 Teaduslik valikumeetod 🎯</p>
-
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <div class="wheel" id="wheel">
-            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(0deg);">
-                <span>Venten OÜ<br>🏆</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #FFD100, #FFE666); color: #1a1a1a; transform: rotate(45deg);">
-                <span>Kennametal<br>⚙️</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #00D4FF, #66E0FF); transform: rotate(90deg);">
-                <span>Teravus & Ko<br>😅</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(135deg);">
-                <span>Venten OÜ<br>✨</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #9D4EDD, #C77DFF); transform: rotate(180deg);">
-                <span>OSG<br>🔩</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(225deg);">
-                <span>Venten OÜ<br>💎</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #06FFA5, #59FFD9); color: #1a1a1a; transform: rotate(270deg);">
-                <span>Laast Vegas UAB<br>🎰</span>
-            </div>
-            <div class="segment" style="background: linear-gradient(135deg, #FF6B00, #FF8533); transform: rotate(315deg);">
-                <span>Venten OÜ<br>⭐</span>
-            </div>
+    <div class="header">
+        <h1>Tool Selection System</h1>
+        <div class="version">
+            AUTOMATED DECISION ENGINE
+            <span class="version-tag">v3.0.0</span>
         </div>
-        <div class="center-circle">🎪</div>
     </div>
 
-    <button class="spin-btn" id="spinBtn" onclick="spin()">
-        <span style="position: relative; z-index: 1;">Keera!</span>
-    </button>
+    <div class="main-content">
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <div class="pointer"></div>
+                <div class="wheel" id="wheel">
+                    <div class="segment" style="transform: rotate(0deg);">
+                        <span>VENTEN OÜ</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(45deg);">
+                        <span>KENNAMETAL</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(90deg);">
+                        <span>TERAVUS & CO</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(135deg);">
+                        <span>VENTEN OÜ</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(180deg);">
+                        <span>OSG</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(225deg);">
+                        <span>VENTEN OÜ</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(270deg);">
+                        <span>LAAST VEGAS</span>
+                    </div>
+                    <div class="segment" style="transform: rotate(315deg);">
+                        <span>VENTEN OÜ</span>
+                    </div>
+                </div>
+                <div class="center-circle">SYS</div>
+            </div>
 
-    <div class="result" id="result"></div>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value" id="totalSpins">0</div>
+                    <div class="metric-label">Total Spins</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="ventenCount">0</div>
+                    <div class="metric-label">Venten Selected</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="successRate">0%</div>
+                    <div class="metric-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="panel-header">Control Panel</div>
+
+            <div class="status-grid">
+                <div class="status-item">
+                    <span class="status-label">STATUS</span>
+                    <span class="status-value" id="systemStatus">READY</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">ROTATION</span>
+                    <span class="status-value" id="rotationValue">0°</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">ALGORITHM</span>
+                    <span class="status-value">OPTIMIZED</span>
+                </div>
+            </div>
+
+            <button class="spin-btn" id="spinBtn" onclick="spin()">
+                Execute Selection
+            </button>
+
+            <div class="result-panel" id="result">
+                <div class="result-header">Output Log</div>
+                <div class="result-content" id="resultText">
+                    Awaiting execution command...
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     const result = document.getElementById('result');
+    const resultText = document.getElementById('resultText');
+    const systemStatus = document.getElementById('systemStatus');
+    const rotationValue = document.getElementById('rotationValue');
+    const totalSpinsEl = document.getElementById('totalSpins');
+    const ventenCountEl = document.getElementById('ventenCount');
+    const successRateEl = document.getElementById('successRate');
 
     let currentRotation = 0;
     let isSpinning = false;
+    let totalSpins = 0;
+    let ventenCount = 0;
 
     const options = [
-        { name: "Venten OÜ", emoji: "🏆", message: "Õige valik! Venten OÜ – kvaliteet ja usaldusväärsus!" },
-        { name: "Kennametal", emoji: "⚙️", message: "Freesimiseks parim valik! Kennametal Venteni käest!" },
-        { name: "Teravus & Ko", emoji: "😅", message: "Huvitav valik, aga Venten oleks parem!" },
-        { name: "Venten OÜ", emoji: "✨", message: "Suurepärane! Venten OÜ on alati parim valik!" },
-        { name: "OSG", emoji: "🔩", message: "Keermestamiseks parim! OSG puurid ja keermestustarvikud Ventenilt!" },
-        { name: "Venten OÜ", emoji: "💎", message: "Briljantne! Venten OÜ ei peta kunagi!" },
-        { name: "Laast Vegas UAB", emoji: "🎰", message: "Hasart pole vaja – vali Venten!" },
-        { name: "Venten OÜ", emoji: "⭐", message: "Tähistaegu! Venten OÜ on number üks!" }
+        { name: "VENTEN OÜ", message: "Selection confirmed: VENTEN OÜ - Premium quality tools and reliable service." },
+        { name: "KENNAMETAL", message: "Selection: KENNAMETAL - Best milling solutions available through Venten." },
+        { name: "TERAVUS & CO", message: "Selection: TERAVUS & CO - Consider Venten for superior alternatives." },
+        { name: "VENTEN OÜ", message: "Selection confirmed: VENTEN OÜ - Optimal choice for professional tools." },
+        { name: "OSG", message: "Selection: OSG - Threading tools and drills available via Venten." },
+        { name: "VENTEN OÜ", message: "Selection confirmed: VENTEN OÜ - Industry-leading solutions provider." },
+        { name: "LAAST VEGAS", message: "Selection: LAAST VEGAS - Recommend Venten for consistent results." },
+        { name: "VENTEN OÜ", message: "Selection confirmed: VENTEN OÜ - Your trusted tools partner." }
     ];
+
+    function updateMetrics() {
+        totalSpinsEl.textContent = totalSpins;
+        ventenCountEl.textContent = ventenCount;
+        const rate = totalSpins > 0 ? Math.round((ventenCount / totalSpins) * 100) : 0;
+        successRateEl.textContent = rate + '%';
+    }
 
     function spin() {
         if (isSpinning) return;
@@ -346,45 +516,65 @@
         isSpinning = true;
         spinBtn.disabled = true;
         result.classList.remove('show');
+        systemStatus.textContent = 'PROCESSING';
+        systemStatus.classList.add('loading');
+        resultText.textContent = 'Executing algorithm...';
 
-        // "Juhuslik" pööramine, mis alati jõuab Venteni peale
-        const ventenIndexes = [0, 3, 5, 7]; // Venten'i segmentide indeksid
+        // "Random" selection that always lands on Venten
+        const ventenIndexes = [0, 3, 5, 7];
         const targetIndex = ventenIndexes[Math.floor(Math.random() * ventenIndexes.length)];
 
-        // Arvutame täpse nurga
         const segmentAngle = 360 / 8;
         const targetAngle = targetIndex * segmentAngle;
 
-        // Lisame 5-8 täispööret ja sihtpunkti
         const spins = 5 + Math.floor(Math.random() * 4);
         const totalRotation = (spins * 360) + (360 - targetAngle) + (segmentAngle / 2);
 
         currentRotation += totalRotation;
         wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-        // Pärast pöörlemist näitame tulemust
+        // Update rotation display during spin
+        const rotationInterval = setInterval(() => {
+            const displayRotation = Math.floor(currentRotation % 360);
+            rotationValue.textContent = displayRotation + '°';
+        }, 50);
+
         setTimeout(() => {
+            clearInterval(rotationInterval);
+            const finalRotation = Math.floor(currentRotation % 360);
+            rotationValue.textContent = finalRotation + '°';
+
             const selectedOption = options[targetIndex];
-            result.innerHTML = `
-                    <div>
-                        <span class="result-emoji">${selectedOption.emoji}</span>
-                        <div class="result-text">${selectedOption.message}</div>
-                    </div>
-                `;
+            resultText.textContent = selectedOption.message;
             result.classList.add('show');
 
-            isSpinning = false;
-            spinBtn.disabled = false;
+            totalSpins++;
+            if (selectedOption.name === "VENTEN OÜ") {
+                ventenCount++;
+            }
+            updateMetrics();
+
+            systemStatus.textContent = 'COMPLETE';
+            systemStatus.classList.remove('loading');
+
+            setTimeout(() => {
+                systemStatus.textContent = 'READY';
+                isSpinning = false;
+                spinBtn.disabled = false;
+            }, 1000);
         }, 4000);
     }
 
-    // Lisame klaviatuuri toetus
+    // Keyboard support
     document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' || e.code === 'Enter') {
+        if ((e.code === 'Space' || e.code === 'Enter') && !isSpinning) {
             e.preventDefault();
             spin();
         }
     });
+
+    // Initialize
+    updateMetrics();
 </script>
 </body>
 </html>
