@@ -787,14 +787,14 @@
                 <label for="themeToggle" class="toggle-label"></label>
                 <span class="toggle-icon sun">☀️</span>
             </div>
-            <!-- Language selector -->
+        <!--    &lt;!&ndash; Language selector &ndash;&gt;
             <div style="display:flex; align-items:center; gap:8px;">
-                <label for="langSelect" style="font-size:0.85em; color:var(--text-secondary);">Lang</label>
-                <select id="langSelect" aria-label="Language" style="padding:6px; background:var(--input-bg); color:var(--text-primary); border:1px solid var(--border-color);">
+                <label for="langSelect" style="font-size:0.85em; color:var(&#45;&#45;text-secondary);">Lang</label>
+                <select id="langSelect" aria-label="Language" style="padding:6px; background:var(&#45;&#45;input-bg); color:var(&#45;&#45;text-primary); border:1px solid var(&#45;&#45;border-color);">
                     <option value="et">ET</option>
                     <option value="en">EN</option>
                 </select>
-            </div>
+            </div>-->
         </div>
     </div>
 
@@ -879,7 +879,7 @@
             <div class="upload-section" id="uploadSection">
                 <label class="upload-label">📸 Machine label (photo)</label>
                 <div class="file-input-wrapper">
-                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">
+<!--                    <input type="file" id="machinePhoto" accept="image/*" onchange="handlePhotoUpload(event)">-->
                     <button class="upload-btn" onclick="document.getElementById('machinePhoto').click();">
                         Upload image
                     </button>
@@ -1290,7 +1290,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
-        // Translations loader: load per-language JSON files from /translations/*.json
+      /*  // Translations loader: load per-language JSON files from /translations/!*.json
         const translations = {}; // will hold loaded language objects
         window._currentLang = null;
 
@@ -1498,7 +1498,7 @@
                     }
                 }
             });
-        }
+        }*/
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -1531,10 +1531,10 @@
         //
         // Built-in translations are removed to avoid duplicate keys; use external files only.
         // Ensure default translation objects exist so applyTranslations has something to merge
-        translations.et = Object.assign({}, translations.et || {});
-        translations.en = Object.assign({}, translations.en || {});
+       /* translations.et = Object.assign({}, translations.et || {});
+        translations.en = Object.assign({}, translations.en || {});*/
 
-        // Wire the language selector and apply language on load
+      /*  // Wire the language selector and apply language on load
         (function() {
             const langSelect = document.getElementById('langSelect');
             const savedLang = localStorage.getItem('toolboss_lang') || 'et';
@@ -1551,7 +1551,7 @@
             // Apply translations on initial load
             // prefer savedLang, or default to 'et'
             applyTranslations(savedLang).catch(err => console.warn('Initial applyTranslations failed', err));
-        })();
+        })();*/
 
         // Toggle manual time input
         function toggleManualTime(tool) {
@@ -1743,16 +1743,16 @@
                 const comparison = parseFloat(document.getElementById(tool + 'ToolLife').value) || 0;
 
                 let statusColor = '#00ff41';
-                let statusText = 'OPTIMAALNE';
+                let statusText = 'OPTIMUM';
 
                 if (comparison > 0) {
                     const ratio = comparison / estimatedLife;
                     if (ratio > 1.3) {
                         statusColor = '#ffaa00';
-                        statusText = 'OPTIMISTLIK (+' + ((ratio - 1) * 100).toFixed(0) + '%)';
+                        statusText = 'OPTIMISTIC (+' + ((ratio - 1) * 100).toFixed(0) + '%)';
                     } else if (ratio < 0.7) {
                         statusColor = '#00ff41';
-                        statusText = 'KONSERVATIIVNE (-' + ((1 - ratio) * 100).toFixed(0) + '%)';
+                        statusText = 'CONSERVATIVE (-' + ((1 - ratio) * 100).toFixed(0) + '%)';
                     }
                 }
 
